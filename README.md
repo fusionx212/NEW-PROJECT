@@ -18,8 +18,8 @@ Everything is generated offline with free tools. There are no paid APIs, no stoc
 - A personal hook nobody else offers: *"The light from Arcturus that shone on London that night had left the star around 1957."*
 
 **Moving-nebula videos**
-- Any episode or keepsake can also be rendered as an MP4. A procedural nebula drifts and slowly zooms, three layers of stars twinkle with parallax, and a soft glow brightens when the narrator speaks.
-- Every name grows its own nebula: the same name always gives the same clouds and colours, so "Maya's nebula" is truly hers. See `output/name-gallery/six-names.jpg`.
+- Any episode or keepsake can also be rendered as an MP4 that looks like a Hubble or JWST image. Each video starts from one detailed nebula "photograph" made in code: glowing filaments in three narrowband colours (hydrogen, oxygen, sulphur), dark dust clouds lit at the edges by a young star cluster, and bright stars with diffraction spikes. A slow camera then glides and zooms through it, with the stars moving on their own layer for depth, and a soft glow that follows the narrator's voice.
+- Every name grows its own nebula: the same name always gives the same clouds and colours, so "Maya's nebula" is truly hers. See `output/name-gallery/eight-names.jpg`.
 - Use them for YouTube sleep channels, Reels and TikTok teasers, or as a nicer keepsake to send to family.
 
 ## Samples in this repo
@@ -70,7 +70,7 @@ python -m skysoftly keepsake --city London --country GB --date 1994-07-16 --time
 
 # Or turn any audio file into a nebula video
 python -m skysoftly video --audio episode.mp3 --out episode.mp4 --subtitle "Boulder · Full Moon" \
-    --palette violet          # violet, teal, rose or ocean
+    --palette jwst            # hubble, natural, jwst or violet
 python -m skysoftly video --audio letter.mp3 --out maya.mp4 --title "Maya" --nebula-name "Maya"
 
 # Scripts and charts only, in seconds
@@ -90,7 +90,8 @@ Rendering speed on a 4-core CPU is roughly 2 to 3 minutes of audio work per epis
 | `skysoftly/render.py` + `tools/audio_kit.py` | Kokoro TTS with timed pauses, a synthesized ambient bed and sting, then ffmpeg loudness mastering to podcast spec (-16 LUFS). |
 | `skysoftly/chart.py` | All-sky star charts, the kids' look-up card, keepsake PDF and podcast cover art. |
 | `skysoftly/feed.py` | Podcast RSS feed with Apple Podcasts tags. |
-| `skysoftly/video.py` | Moving-nebula video: FFT fractal-noise clouds with bloom and filmic tone-mapping, parallax star field, a voice-driven glow, title and end cards, encoded with ffmpeg and libx264. |
+| `skysoftly/nebula.py` | Photoreal nebula stills: domain-warped fractal noise, ridged filaments per emission line, rim-lit dust, an astronomy-style asinh stretch, and a star layer with diffraction spikes. |
+| `skysoftly/video.py` | Camera glide through the still with a parallax star layer, a voice-driven glow, title and end cards, encoded with ffmpeg and libx264. |
 
 Tests run without the TTS model: `python -m pytest -q tests`.
 

@@ -96,7 +96,7 @@ def test_video_short_clip(tmp_path):
     wav = tmp_path / "a.wav"
     import soundfile as sf
     sf.write(wav, (0.1 * np.sin(np.linspace(0, 2000, 24000 * 2))).astype(np.float32), 24000)
-    out = make_video(wav, tmp_path / "v.mp4", title="Test", subtitle="Sub", seed=2, size=(320, 180))
+    out = make_video(wav, tmp_path / "v.mp4", title="Test", subtitle="Sub", seed=2, size=(320, 180), still_px=512)
     probe = subprocess.run(["ffprobe", "-v", "error", "-show_entries", "stream=codec_type", "-of", "csv=p=0", str(out)],
                            capture_output=True, text=True, check=True).stdout.split()
     assert sorted(probe) == ["audio", "video"]
@@ -106,3 +106,14 @@ def test_name_style_is_stable_and_varied():
     from skysoftly.video import name_style
     assert name_style("Maya") == name_style(" maya ")
     assert len({name_style(n) for n in ["Maya", "Leo", "Amara", "Noah", "Isla", "Oliver"]}) == 6
+
+
+def test_nebula_still_has_structure():
+    import numpy as np
+    from skysoftly.nebula import make_nebula
+    gas, stars = make_nebula(7, "natural", 512)
+    lum = gas.mean(-1)
+    assert gas.shape == (512, 512, 3) and stars.shape == (512, 512, 3)
+    assert (lum < 0.05).mean() > 0.15          # real dark sky around the cloud
+    assert np.percentile(lum, 99) > 0.3        # and bright glowing gas
+    assert stars.max() > 0.9                   # bright stars

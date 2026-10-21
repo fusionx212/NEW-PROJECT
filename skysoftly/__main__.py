@@ -158,7 +158,7 @@ def main(argv=None):
     v.add_argument("--title", default="Tonight's Sky, Softly"); v.add_argument("--subtitle")
     v.add_argument("--end-line", default="Goodnight."); v.add_argument("--seed", type=int, default=1)
     v.add_argument("--nebula-name", help="Grow a unique nebula from a name (same name, same nebula, every time)")
-    v.add_argument("--palette", choices=["violet", "teal", "rose", "ocean"])
+    v.add_argument("--palette", choices=["hubble", "natural", "jwst", "violet"], help="Colour style; default comes from the name or seed")
     v.add_argument("--video-size", default="1280x720")
     a = ap.parse_args(argv)
     {"nightly": cmd_nightly, "keepsake": cmd_keepsake, "video": cmd_video}[a.cmd](a)
