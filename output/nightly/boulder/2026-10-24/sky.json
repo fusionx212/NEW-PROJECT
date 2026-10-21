@@ -1,0 +1,302 @@
+{
+ "place": {
+  "name": "Boulder",
+  "lat": 40.01499,
+  "lon": -105.27055,
+  "tz": "America/Denver",
+  "country": "US"
+ },
+ "date": "2026-10-24",
+ "weekday": "Saturday",
+ "look_time": "2026-10-24T19:30-06:00",
+ "still_light_at_look": false,
+ "sun": {
+  "sunrise_today": "2026-10-24T07:21-06:00",
+  "sunset": "2026-10-24T18:08-06:00",
+  "civil_dusk": "2026-10-24T18:36-06:00",
+  "nautical_dusk": "2026-10-24T19:07-06:00",
+  "astronomical_dusk": "2026-10-24T19:39-06:00",
+  "sunrise_tomorrow": "2026-10-25T07:22-06:00",
+  "day_length_min": 648,
+  "day_length_change_week_min": -17
+ },
+ "moon": {
+  "name": "Moon",
+  "alt": 25.9,
+  "az": 99.5,
+  "mag": -12.4,
+  "constellation": "Pisces",
+  "rise": "2026-10-24T17:07-06:00",
+  "set": "2026-10-25T06:50-06:00",
+  "status": "up",
+  "extra": {
+   "illumination": 98.3,
+   "waxing": true,
+   "phase": "Waxing Gibbous",
+   "next_full": "2026-10-25T22:11-06:00",
+   "next_full_name": "Hunter's Moon",
+   "days_to_full": 1.1,
+   "days_to_new": 15.2,
+   "days_since_full": 28.4
+  }
+ },
+ "planets": [
+  {
+   "name": "Mercury",
+   "alt": -8.1,
+   "az": 249.6,
+   "mag": 0.9,
+   "constellation": "Libra",
+   "rise": "2026-10-25T09:06-06:00",
+   "set": "2026-10-25T18:43-06:00",
+   "status": "hidden",
+   "extra": {
+    "moon_separation": 146.5
+   }
+  },
+  {
+   "name": "Venus",
+   "alt": -22.4,
+   "az": 265.5,
+   "mag": -3.7,
+   "constellation": "Virgo",
+   "rise": "2026-10-25T07:24-06:00",
+   "set": "2026-10-25T17:27-06:00",
+   "status": "hidden",
+   "extra": {
+    "moon_separation": 166.8
+   }
+  },
+  {
+   "name": "Mars",
+   "alt": 59.5,
+   "az": 130.2,
+   "mag": 0.9,
+   "constellation": "Cancer",
+   "rise": "2026-10-25T00:53-06:00",
+   "set": "2026-10-25T15:02-06:00",
+   "status": "morning",
+   "extra": {
+    "moon_separation": 117.5
+   }
+  },
+  {
+   "name": "Jupiter",
+   "alt": 52.1,
+   "az": 123.6,
+   "mag": -1.8,
+   "constellation": "Leo",
+   "rise": "2026-10-25T01:37-06:00",
+   "set": "2026-10-25T15:20-06:00",
+   "status": "morning",
+   "extra": {
+    "moon_separation": 125.9
+   }
+  },
+  {
+   "name": "Saturn",
+   "alt": 24.0,
+   "az": 109.8,
+   "mag": 0.5,
+   "constellation": "Cetus",
+   "rise": "2026-10-25T17:16-06:00",
+   "set": "2026-10-25T05:33-06:00",
+   "status": "up",
+   "extra": {
+    "moon_separation": 9.5
+   }
+  }
+ ],
+ "stars": [
+  {
+   "name": "Vega",
+   "alt": 65.8,
+   "az": 277.3,
+   "mag": 0.03,
+   "light_years": 25
+  },
+  {
+   "name": "Altair",
+   "alt": 56.8,
+   "az": 203.9,
+   "mag": 0.76,
+   "light_years": 17
+  },
+  {
+   "name": "Deneb",
+   "alt": 84.7,
+   "az": 357.4,
+   "mag": 1.25,
+   "light_years": 3229
+  },
+  {
+   "name": "Mirfak",
+   "alt": 23.7,
+   "az": 43.8,
+   "mag": 1.79,
+   "light_years": 592
+  },
+  {
+   "name": "Alkaid",
+   "alt": 21.6,
+   "az": 317.1,
+   "mag": 1.85,
+   "light_years": 101
+  },
+  {
+   "name": "Polaris",
+   "alt": 40.0,
+   "az": 1.0,
+   "mag": 1.97,
+   "light_years": 431
+  },
+  {
+   "name": "Hamal",
+   "alt": 21.4,
+   "az": 76.7,
+   "mag": 2.01,
+   "light_years": 66
+  },
+  {
+   "name": "Mirach",
+   "alt": 38.3,
+   "az": 72.2,
+   "mag": 2.07,
+   "light_years": 199
+  },
+  {
+   "name": "Kochab",
+   "alt": 38.7,
+   "az": 339.5,
+   "mag": 2.07,
+   "light_years": 126
+  },
+  {
+   "name": "Alpheratz",
+   "alt": 46.9,
+   "az": 88.2,
+   "mag": 2.07,
+   "light_years": 97
+  }
+ ],
+ "zenith_constellation": "Cygnus",
+ "high_constellations": [
+  {
+   "name": "Cygnus",
+   "alt": 82.3,
+   "az": 198.4
+  },
+  {
+   "name": "Lacerta",
+   "alt": 73.0,
+   "az": 78.0
+  },
+  {
+   "name": "Vulpecula",
+   "alt": 70.7,
+   "az": 205.2
+  },
+  {
+   "name": "Lyra",
+   "alt": 65.1,
+   "az": 256.7
+  },
+  {
+   "name": "Delphinus",
+   "alt": 64.6,
+   "az": 181.4
+  },
+  {
+   "name": "Cepheus",
+   "alt": 62.6,
+   "az": 16.3
+  },
+  {
+   "name": "Sagitta",
+   "alt": 61.9,
+   "az": 211.1
+  },
+  {
+   "name": "Equuleus",
+   "alt": 56.8,
+   "az": 165.3
+  },
+  {
+   "name": "Pegasus",
+   "alt": 53.1,
+   "az": 119.0
+  },
+  {
+   "name": "Cassiopeia",
+   "alt": 51.0,
+   "az": 39.7
+  },
+  {
+   "name": "Draco",
+   "alt": 45.8,
+   "az": 323.7
+  },
+  {
+   "name": "Hercules",
+   "alt": 44.9,
+   "az": 282.6
+  },
+  {
+   "name": "Aquila",
+   "alt": 44.8,
+   "az": 211.8
+  },
+  {
+   "name": "Andromeda",
+   "alt": 43.9,
+   "az": 63.8
+  },
+  {
+   "name": "Ursa Minor",
+   "alt": 42.4,
+   "az": 351.6
+  }
+ ],
+ "meteors_active": [
+  {
+   "name": "Orionids",
+   "start": [
+    10,
+    2
+   ],
+   "peak": [
+    10,
+    21
+   ],
+   "end": [
+    11,
+    7
+   ],
+   "zhr": 20,
+   "radiant": "Orion",
+   "days_to_peak": -3,
+   "peak_date": "2026-10-21"
+  }
+ ],
+ "meteors_upcoming": {
+  "name": "Leonids",
+  "start": [
+   11,
+   6
+  ],
+  "peak": [
+   11,
+   17
+  ],
+  "end": [
+   11,
+   30
+  ],
+  "zhr": 15,
+  "radiant": "Leo",
+  "days_to_start": 13,
+  "peak_date": "2026-11-17"
+ },
+ "season": null,
+ "lst_rad": 5.422583651287056
+}

@@ -1,0 +1,287 @@
+{
+ "place": {
+  "name": "London",
+  "lat": 51.50853,
+  "lon": -0.12574,
+  "tz": "Europe/London",
+  "country": "GB"
+ },
+ "date": "1994-07-16",
+ "weekday": "Saturday",
+ "look_time": "1994-07-16T22:30+01:00",
+ "still_light_at_look": true,
+ "sun": {
+  "sunrise_today": "1994-07-16T05:01+01:00",
+  "sunset": "1994-07-16T21:10+01:00",
+  "civil_dusk": "1994-07-16T21:56+01:00",
+  "nautical_dusk": "1994-07-16T22:58+01:00",
+  "astronomical_dusk": null,
+  "sunrise_tomorrow": "1994-07-17T05:02+01:00",
+  "day_length_min": 970,
+  "day_length_change_week_min": -14
+ },
+ "moon": {
+  "name": "Moon",
+  "alt": 12.5,
+  "az": 224.1,
+  "mag": -10.7,
+  "constellation": "Virgo",
+  "rise": "1994-07-16T14:25+01:00",
+  "set": "1994-07-17T00:17+01:00",
+  "status": "up",
+  "extra": {
+   "illumination": 59.8,
+   "waxing": true,
+   "phase": "Waxing Gibbous",
+   "next_full": "1994-07-22T21:15+01:00",
+   "next_full_name": "Buck Moon",
+   "days_to_full": 5.9,
+   "days_to_new": 21.5,
+   "days_since_full": 23.4
+  }
+ },
+ "planets": [
+  {
+   "name": "Mercury",
+   "alt": -16.3,
+   "az": 343.3,
+   "mag": 0.4,
+   "constellation": "Orion",
+   "rise": "1994-07-17T03:40+01:00",
+   "set": "1994-07-17T19:37+01:00",
+   "status": "hidden",
+   "extra": {
+    "moon_separation": 121.2
+   }
+  },
+  {
+   "name": "Venus",
+   "alt": 3.2,
+   "az": 282.9,
+   "mag": -4.0,
+   "constellation": "Leo",
+   "rise": "1994-07-17T09:01+01:00",
+   "set": "1994-07-16T22:53+01:00",
+   "status": "hidden",
+   "extra": {
+    "moon_separation": 58.9
+   }
+  },
+  {
+   "name": "Mars",
+   "alt": -16.4,
+   "az": 9.1,
+   "mag": 1.2,
+   "constellation": "Taurus",
+   "rise": "1994-07-17T01:48+01:00",
+   "set": "1994-07-17T17:55+01:00",
+   "status": "rises_later",
+   "extra": {
+    "moon_separation": 145.9
+   }
+  },
+  {
+   "name": "Jupiter",
+   "alt": 16.0,
+   "az": 224.6,
+   "mag": -2.0,
+   "constellation": "Virgo",
+   "rise": "1994-07-17T14:31+01:00",
+   "set": "1994-07-17T00:35+01:00",
+   "status": "up",
+   "extra": {
+    "moon_separation": 3.5
+   }
+  },
+  {
+   "name": "Saturn",
+   "alt": -4.6,
+   "az": 97.7,
+   "mag": 0.8,
+   "constellation": "Aquarius",
+   "rise": "1994-07-16T22:59+01:00",
+   "set": "1994-07-17T09:35+01:00",
+   "status": "rises_later",
+   "extra": {
+    "moon_separation": 126.6
+   }
+  }
+ ],
+ "stars": [
+  {
+   "name": "Arcturus",
+   "alt": 43.4,
+   "az": 242.4,
+   "mag": -0.05,
+   "light_years": 37
+  },
+  {
+   "name": "Vega",
+   "alt": 69.9,
+   "az": 120.4,
+   "mag": 0.03,
+   "light_years": 25
+  },
+  {
+   "name": "Altair",
+   "alt": 35.9,
+   "az": 127.1,
+   "mag": 0.76,
+   "light_years": 17
+  },
+  {
+   "name": "Deneb",
+   "alt": 54.8,
+   "az": 78.5,
+   "mag": 1.25,
+   "light_years": 3229
+  },
+  {
+   "name": "Alioth",
+   "alt": 53.6,
+   "az": 302.5,
+   "mag": 1.76,
+   "light_years": 81
+  },
+  {
+   "name": "Dubhe",
+   "alt": 43.2,
+   "az": 319.5,
+   "mag": 1.81,
+   "light_years": 124
+  },
+  {
+   "name": "Alkaid",
+   "alt": 58.7,
+   "az": 286.1,
+   "mag": 1.85,
+   "light_years": 101
+  },
+  {
+   "name": "Polaris",
+   "alt": 50.9,
+   "az": 0.7,
+   "mag": 1.97,
+   "light_years": 431
+  },
+  {
+   "name": "Kochab",
+   "alt": 63.3,
+   "az": 340.0,
+   "mag": 2.07,
+   "light_years": 126
+  },
+  {
+   "name": "Rasalhague",
+   "alt": 50.7,
+   "az": 169.4,
+   "mag": 2.08,
+   "light_years": 47
+  }
+ ],
+ "zenith_constellation": "Draco",
+ "high_constellations": [
+  {
+   "name": "Draco",
+   "alt": 76.9,
+   "az": 336.3
+  },
+  {
+   "name": "Hercules",
+   "alt": 73.1,
+   "az": 190.4
+  },
+  {
+   "name": "Corona Borealis",
+   "alt": 64.6,
+   "az": 204.5
+  },
+  {
+   "name": "Lyra",
+   "alt": 61.9,
+   "az": 128.2
+  },
+  {
+   "name": "Bootes",
+   "alt": 58.1,
+   "az": 255.7
+  },
+  {
+   "name": "Ursa Minor",
+   "alt": 58.0,
+   "az": 357.1
+  },
+  {
+   "name": "Cepheus",
+   "alt": 52.4,
+   "az": 40.4
+  },
+  {
+   "name": "Cygnus",
+   "alt": 48.8,
+   "az": 96.9
+  },
+  {
+   "name": "Vulpecula",
+   "alt": 44.6,
+   "az": 112.9
+  },
+  {
+   "name": "Canes Venatici",
+   "alt": 42.0,
+   "az": 278.7
+  },
+  {
+   "name": "Sagitta",
+   "alt": 41.9,
+   "az": 124.8
+  },
+  {
+   "name": "Serpens Caput",
+   "alt": 41.3,
+   "az": 193.5
+  }
+ ],
+ "meteors_active": [
+  {
+   "name": "Southern Delta Aquariids",
+   "start": [
+    7,
+    12
+   ],
+   "peak": [
+    7,
+    30
+   ],
+   "end": [
+    8,
+    23
+   ],
+   "zhr": 25,
+   "radiant": "Aquarius",
+   "days_to_peak": 14,
+   "peak_date": "1994-07-30"
+  }
+ ],
+ "meteors_upcoming": {
+  "name": "Perseids",
+  "start": [
+   7,
+   17
+  ],
+  "peak": [
+   8,
+   12
+  ],
+  "end": [
+   8,
+   24
+  ],
+  "zhr": 100,
+  "radiant": "Perseus",
+  "days_to_start": 1,
+  "peak_date": "1994-08-12"
+ },
+ "season": null,
+ "lst_rad": 4.483090334905599
+}

@@ -1,0 +1,289 @@
+{
+ "place": {
+  "name": "Sydney",
+  "lat": -33.86785,
+  "lon": 151.20732,
+  "tz": "Australia/Sydney",
+  "country": "AU"
+ },
+ "date": "2024-03-02",
+ "weekday": "Saturday",
+ "look_time": "2024-03-02T21:00+11:00",
+ "still_light_at_look": false,
+ "sun": {
+  "sunrise_today": "2024-03-02T06:43+11:00",
+  "sunset": "2024-03-02T19:30+11:00",
+  "civil_dusk": "2024-03-02T19:56+11:00",
+  "nautical_dusk": "2024-03-02T20:25+11:00",
+  "astronomical_dusk": "2024-03-02T20:55+11:00",
+  "sunrise_tomorrow": "2024-03-03T06:44+11:00",
+  "day_length_min": 767,
+  "day_length_change_week_min": -15
+ },
+ "moon": {
+  "name": "Moon",
+  "alt": -18.4,
+  "az": 135.1,
+  "mag": -10.7,
+  "constellation": "Libra",
+  "rise": "2024-03-02T22:48+11:00",
+  "set": "2024-03-03T13:40+11:00",
+  "status": "rises_later",
+  "extra": {
+   "illumination": 62.5,
+   "waxing": false,
+   "phase": "Waning Gibbous",
+   "next_full": "2024-03-25T18:00+11:00",
+   "next_full_name": "Worm Moon",
+   "days_to_full": 22.9,
+   "days_to_new": 8.0,
+   "days_since_full": 6.9
+  }
+ },
+ "planets": [
+  {
+   "name": "Mercury",
+   "alt": -16.1,
+   "az": 249.2,
+   "mag": -1.4,
+   "constellation": "Aquarius",
+   "rise": "2024-03-03T06:59+11:00",
+   "set": "2024-03-03T19:42+11:00",
+   "status": "hidden",
+   "extra": {
+    "moon_separation": 106.6
+   }
+  },
+  {
+   "name": "Venus",
+   "alt": 10.5,
+   "az": 102.3,
+   "mag": -3.8,
+   "constellation": "Capricornus",
+   "rise": "2024-03-03T04:49+11:00",
+   "set": "2024-03-03T18:23+11:00",
+   "status": "morning",
+   "extra": {
+    "moon_separation": 79.9
+   }
+  },
+  {
+   "name": "Mars",
+   "alt": 14.8,
+   "az": 101.5,
+   "mag": 1.3,
+   "constellation": "Capricornus",
+   "rise": "2024-03-03T04:27+11:00",
+   "set": "2024-03-03T18:10+11:00",
+   "status": "morning",
+   "extra": {
+    "moon_separation": 75.6
+   }
+  },
+  {
+   "name": "Jupiter",
+   "alt": 13.5,
+   "az": 298.0,
+   "mag": -2.0,
+   "constellation": "Aries",
+   "rise": "2024-03-03T11:25+11:00",
+   "set": "2024-03-02T22:12+11:00",
+   "status": "up",
+   "extra": {
+    "moon_separation": 162.8
+   }
+  },
+  {
+   "name": "Saturn",
+   "alt": -18.4,
+   "az": 244.7,
+   "mag": 1.0,
+   "constellation": "Aquarius",
+   "rise": "2024-03-03T06:32+11:00",
+   "set": "2024-03-03T19:25+11:00",
+   "status": "hidden",
+   "extra": {
+    "moon_separation": 101.7
+   }
+  }
+ ],
+ "stars": [
+  {
+   "name": "Sirius",
+   "alt": 72.8,
+   "az": 358.0,
+   "mag": -1.44,
+   "light_years": 9
+  },
+  {
+   "name": "Canopus",
+   "alt": 70.7,
+   "az": 190.9,
+   "mag": -0.62,
+   "light_years": 313
+  },
+  {
+   "name": "Rigel",
+   "alt": 56.6,
+   "az": 314.8,
+   "mag": 0.18,
+   "light_years": 773
+  },
+  {
+   "name": "Procyon",
+   "alt": 49.0,
+   "az": 19.9,
+   "mag": 0.4,
+   "light_years": 11
+  },
+  {
+   "name": "Betelgeuse",
+   "alt": 46.9,
+   "az": 340.8,
+   "mag": 0.45,
+   "light_years": 427
+  },
+  {
+   "name": "Achernar",
+   "alt": 34.5,
+   "az": 219.9,
+   "mag": 0.45,
+   "light_years": 144
+  },
+  {
+   "name": "Hadar",
+   "alt": 20.5,
+   "az": 150.1,
+   "mag": 0.61,
+   "light_years": 525
+  },
+  {
+   "name": "Acrux",
+   "alt": 32.1,
+   "az": 147.9,
+   "mag": 0.77,
+   "light_years": 321
+  },
+  {
+   "name": "Aldebaran",
+   "alt": 30.7,
+   "az": 322.7,
+   "mag": 0.87,
+   "light_years": 65
+  },
+  {
+   "name": "Pollux",
+   "alt": 26.6,
+   "az": 14.2,
+   "mag": 1.16,
+   "light_years": 34
+  }
+ ],
+ "zenith_constellation": "Canis Major",
+ "high_constellations": [
+  {
+   "name": "Canis Major",
+   "alt": 79.1,
+   "az": 11.5
+  },
+  {
+   "name": "Puppis",
+   "alt": 78.8,
+   "az": 87.6
+  },
+  {
+   "name": "Columba",
+   "alt": 78.2,
+   "az": 239.0
+  },
+  {
+   "name": "Pyxis",
+   "alt": 69.2,
+   "az": 103.6
+  },
+  {
+   "name": "Lepus",
+   "alt": 67.4,
+   "az": 311.0
+  },
+  {
+   "name": "Caelum",
+   "alt": 65.8,
+   "az": 251.2
+  },
+  {
+   "name": "Pictor",
+   "alt": 64.4,
+   "az": 188.4
+  },
+  {
+   "name": "Dorado",
+   "alt": 60.1,
+   "az": 204.7
+  },
+  {
+   "name": "Vela",
+   "alt": 56.7,
+   "az": 128.2
+  },
+  {
+   "name": "Monoceros",
+   "alt": 55.2,
+   "az": 0.4
+  },
+  {
+   "name": "Volans",
+   "alt": 54.4,
+   "az": 168.3
+  },
+  {
+   "name": "Reticulum",
+   "alt": 51.8,
+   "az": 209.9
+  },
+  {
+   "name": "Carina",
+   "alt": 51.1,
+   "az": 147.9
+  },
+  {
+   "name": "Mensa",
+   "alt": 48.9,
+   "az": 183.7
+  },
+  {
+   "name": "Eridanus",
+   "alt": 47.8,
+   "az": 269.7
+  },
+  {
+   "name": "Canis Minor",
+   "alt": 46.6,
+   "az": 23.5
+  },
+  {
+   "name": "Horologium",
+   "alt": 46.5,
+   "az": 227.8
+  },
+  {
+   "name": "Orion",
+   "alt": 44.8,
+   "az": 331.2
+  },
+  {
+   "name": "Antlia",
+   "alt": 44.1,
+   "az": 109.2
+  },
+  {
+   "name": "Fornax",
+   "alt": 42.5,
+   "az": 257.4
+  }
+ ],
+ "meteors_active": [],
+ "meteors_upcoming": null,
+ "season": null,
+ "lst_rad": 1.7783853177558935
+}

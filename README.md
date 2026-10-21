@@ -9,11 +9,11 @@ Everything is generated offline with free tools. There are no paid APIs, no stoc
 ## What a buyer gets
 
 **Nightly feed (per city)**
-- A 5 to 7 minute episode every night: breathing, the Sun, the Moon "forecast", planets, three stars with light-travel times, the constellation overhead with a short story, meteor showers and seasons, one sky fact, a "look out of the window" moment, and a slow recap.
+- A 4 to 5 minute episode every night: breathing, the Sun, the Moon "forecast", planets, three stars with light-travel times, the constellation overhead with a short story, meteor showers and seasons, one sky fact, a "look out of the window" moment, and a slow recap.
 - A printable look-up card with tonight's real star chart and a tick-box checklist.
 
 **Keepsake (made to order)**
-- A 3 to 4 minute narrated letter describing exactly what the sky was doing over one place at one moment.
+- A 2 to 3 minute narrated letter describing exactly what the sky was doing over one place at one moment.
 - A two-page A4 PDF: the star chart for that moment, plus the written letter.
 - A personal hook nobody else offers: *"The light from Arcturus that shone on London that night had left the star around 1957."*
 
