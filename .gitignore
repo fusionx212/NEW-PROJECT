@@ -1,7 +1,8 @@
 models/*.onnx
 models/*.bin
 models/*.bsp
-output/**/*.wav
+**/*.wav
 __pycache__/
 *.pyc
 .venv/
+.pytest_cache/

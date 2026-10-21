@@ -61,13 +61,12 @@ def pad_bed(duration: float, root_hz: float = 110.0, seed: int = 7, gain_db: flo
             ph = rng.uniform(0, 2*np.pi)
             lfo = 0.5 + 0.5*np.sin(2*np.pi*(0.02 + 0.01*i)*t + ph)
             out += (np.sin(2*np.pi*(f+det)*t + ph) * lfo).astype(np.float32) / (len(ratios)*3) / (1 + i*0.6)
-    # gentle noise air
+    # gentle noise "air", low-passed with an FFT convolution (fast for long beds)
     air = rng.normal(0, 1, n).astype(np.float32)
-    # one-pole lowpass on air
-    y = np.zeros(n, dtype=np.float32); a = 0.02
-    for i in range(1, n):
-        y[i] = y[i-1] + a*(air[i]-y[i-1])
-    out += y * 0.15
+    k = np.exp(-np.arange(2048) / 50.0).astype(np.float32); k /= k.sum()
+    m = 1 << int(np.ceil(np.log2(n + len(k))))
+    y = np.fft.irfft(np.fft.rfft(air, m) * np.fft.rfft(k, m), m)[:n].astype(np.float32)
+    out += y / (np.max(np.abs(y)) + 1e-9) * 0.08
     out *= _env(n, 3.0, 4.0)
     out /= (np.max(np.abs(out)) + 1e-9)
     return out * (10 ** (gain_db/20))
