@@ -49,7 +49,7 @@ Benchmarks the ideation research found: Koala Kids sleep-story bundles sell at $
 ## Run it
 
 ```bash
-pip install -r requirements.txt
+pip install -r requirements.txt     # also needs ffmpeg installed (apt install ffmpeg / brew install ffmpeg)
 ./tools/fetch_models.sh            # free Kokoro-82M TTS model (Apache-2.0), ~350 MB, CPU only
 
 # A week of nightly episodes for any city with population > 15,000 (offline lookup)
