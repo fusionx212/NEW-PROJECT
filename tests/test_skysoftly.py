@@ -87,3 +87,16 @@ def test_card_and_feed(tmp_path):
         {"slug": "ep", "date": "2026-10-21", "title": "t & t", "audio": "episode.mp3", "bytes": 1, "duration_s": 300, "summary": "s"}))
     feed = build_feed(tmp_path, "https://example.com/x", "Boulder")
     xml.dom.minidom.parse(str(feed))
+
+
+def test_video_short_clip(tmp_path):
+    import subprocess
+    import numpy as np
+    from skysoftly.video import make_video
+    wav = tmp_path / "a.wav"
+    import soundfile as sf
+    sf.write(wav, (0.1 * np.sin(np.linspace(0, 2000, 24000 * 2))).astype(np.float32), 24000)
+    out = make_video(wav, tmp_path / "v.mp4", title="Test", subtitle="Sub", seed=2, size=(320, 180))
+    probe = subprocess.run(["ffprobe", "-v", "error", "-show_entries", "stream=codec_type", "-of", "csv=p=0", str(out)],
+                           capture_output=True, text=True, check=True).stdout.split()
+    assert sorted(probe) == ["audio", "video"]

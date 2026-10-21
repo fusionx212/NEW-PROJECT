@@ -58,6 +58,12 @@ def cmd_nightly(a):
             meta["duration_s"] = round(render(text, mp3, voice=a.voice, title=title, album=f"Tonight's Sky, Softly: {place.name}",
                                               seed=day.toordinal() % 97, root_hz=[98.0, 110.0, 87.3, 103.8][day.toordinal() % 4]), 1)
             meta["bytes"] = mp3.stat().st_size
+            if a.video:
+                from .video import make_video
+                ph = sky["moon"]["extra"]["phase"]
+                make_video(mp3, ep / "episode.mp4", title="Tonight's Sky, Softly",
+                           subtitle=f"{place.name} · {day.strftime('%A %d %B %Y')} · {ph if ph.endswith('Moon') else ph + ' Moon'}",
+                           seed=day.toordinal(), size=_size(a.video_size))
         (ep / "episode.json").write_text(json.dumps(meta, indent=1))
         print(f"  {slug}  {meta['duration_s']:>6.0f}s  {meta['summary']}")
     cover_art(sky_for(place, start), out / "cover.png", place.name)
@@ -78,6 +84,18 @@ def _summary(sky: dict) -> str:
     if sky["meteors_active"]:
         bits.append(f"{sky['meteors_active'][0]['name']} meteor shower")
     return "; ".join(bits) + "."
+
+
+def _size(s: str) -> tuple[int, int]:
+    w, h = s.lower().split("x")
+    return int(w), int(h)
+
+
+def cmd_video(a):
+    from .video import make_video
+    out = make_video(Path(a.audio), Path(a.out), title=a.title, subtitle=a.subtitle or "", end_line=a.end_line,
+                     seed=a.seed, palette=a.palette, size=_size(a.video_size))
+    print("Done:", out)
 
 
 HEADLINES = {"birth": "The night {name} was born", "wedding": "The night {name} were married",
@@ -102,6 +120,12 @@ def cmd_keepsake(a):
         d = render(text, out / "letter-from-the-sky.mp3", voice=a.voice, title=headline, album="A letter from the sky",
                    root_hz=87.3, seed=11, speed=0.85)
         print(f"  audio {d:.0f}s")
+        if a.video:
+            from .video import make_video
+            make_video(out / "letter-from-the-sky.mp3", out / "letter-from-the-sky.mp4", title=headline,
+                       subtitle=f"{place.name} · {when.strftime('%d %B %Y')}", end_line="With love, from the sky.",
+                       seed=when.toordinal(), size=_size(a.video_size))
+            print("  video", out / "letter-from-the-sky.mp4")
     print("Done:", out)
 
 
@@ -115,6 +139,8 @@ def main(argv=None):
         p.add_argument("--place-name", help="How the narrator should name the place")
         p.add_argument("--voice", default="af_heart", help="Kokoro voice, e.g. af_heart, bf_emma, bm_george")
         p.add_argument("--out"); p.add_argument("--no-audio", action="store_true", help="Scripts and charts only (fast)")
+        p.add_argument("--video", action="store_true", help="Also render a moving-nebula MP4 for each audio file")
+        p.add_argument("--video-size", default="1280x720", help="e.g. 1280x720, 1920x1080, or 1080x1920 for Reels/TikTok")
     n = sub.choices["nightly"]
     n.add_argument("--start", default=dt.date.today().isoformat()); n.add_argument("--days", type=int, default=7)
     n.add_argument("--base-url", help="Public URL where the folder will be hosted; writes feed.xml")
@@ -122,8 +148,14 @@ def main(argv=None):
     k.add_argument("--date", required=True); k.add_argument("--time", default="21:00")
     k.add_argument("--occasion", choices=list(HEADLINES), default="birth")
     k.add_argument("--name", required=True, help="e.g. 'Maya', or 'Sam and Alex' for a wedding")
+    v = sub.add_parser("video", help="Moving-nebula video for any audio file")
+    v.add_argument("--audio", required=True); v.add_argument("--out", required=True)
+    v.add_argument("--title", default="Tonight's Sky, Softly"); v.add_argument("--subtitle")
+    v.add_argument("--end-line", default="Goodnight."); v.add_argument("--seed", type=int, default=1)
+    v.add_argument("--palette", choices=["violet", "teal", "rose", "ocean"])
+    v.add_argument("--video-size", default="1280x720")
     a = ap.parse_args(argv)
-    {"nightly": cmd_nightly, "keepsake": cmd_keepsake}[a.cmd](a)
+    {"nightly": cmd_nightly, "keepsake": cmd_keepsake, "video": cmd_video}[a.cmd](a)
 
 
 if __name__ == "__main__":

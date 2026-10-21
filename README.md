@@ -17,12 +17,17 @@ Everything is generated offline with free tools. There are no paid APIs, no stoc
 - A two-page A4 PDF: the star chart for that moment, plus the written letter.
 - A personal hook nobody else offers: *"The light from Arcturus that shone on London that night had left the star around 1957."*
 
+**Moving-nebula videos**
+- Any episode or keepsake can also be rendered as an MP4. A procedural nebula drifts and slowly zooms, three layers of stars twinkle with parallax, and a soft glow brightens when the narrator speaks.
+- Use them for YouTube sleep channels, Reels and TikTok teasers, or as a nicer keepsake to send to family.
+
 ## Samples in this repo
 
 | Folder | What it is |
 |---|---|
 | `output/nightly/boulder/` | One full week for Boulder, Colorado, 21 to 27 October 2026, with MP3s, scripts, look-up cards, cover art and a podcast `feed.xml` |
-| `output/keepsakes/sample-birth/` | London, 16 July 1994: the night "Maya" was born |
+| `output/nightly/boulder/2026-10-25/episode.mp4` | The full Moon episode as a moving-nebula video |
+| `output/keepsakes/sample-birth/` | London, 16 July 1994: the night "Maya" was born, with a widescreen and a vertical video |
 | `output/keepsakes/sample-wedding/` | Edinburgh, 15 June 2019: "Sam and Alex" |
 | `output/keepsakes/sample-memorial/` | Sydney, 2 March 2024: "Grandad Joe" |
 
@@ -35,6 +40,7 @@ All names in the samples are fictional.
 | Nightly feed, one city | $2.99/month or $19.99/year | Substack paid podcast, Patreon or Ko-fi membership (all free to start, they take a cut of sales) |
 | Keepsake | $19 (audio + chart + letter) | Etsy made-to-order digital listing, Gumroad or Payhip |
 | Keepsake family set | $29 for three dates | Same |
+| Keepsake with video | $29 (adds the nebula MP4) | Same |
 | Classroom/library licence | $49/year per city | Direct, Gumroad |
 
 Benchmarks the ideation research found: Koala Kids sleep-story bundles sell at $5.99 on Apple Podcasts, custom star-map prints sell from $5 to $32 on Etsy with thousands of listings, and none of them include audio.
@@ -57,13 +63,21 @@ python -m skysoftly keepsake --city London --country GB --date 1994-07-16 --time
 python -m skysoftly keepsake --lat 36.17 --lon -115.14 --tz America/Los_Angeles \
     --place-name "Las Vegas" --date 2015-09-12 --time 21:30 --occasion wedding --name "Ana and Luis"
 
+# Add --video to either command for a moving-nebula MP4 beside each MP3
+python -m skysoftly keepsake --city London --country GB --date 1994-07-16 --time 22:30 \
+    --occasion birth --name "Maya" --video --video-size 1080x1920   # vertical for Reels/TikTok
+
+# Or turn any audio file into a nebula video
+python -m skysoftly video --audio episode.mp3 --out episode.mp4 --subtitle "Boulder · Full Moon" \
+    --palette violet          # violet, teal, rose or ocean
+
 # Scripts and charts only, in seconds
 python -m skysoftly nightly --city Paris --country FR --days 7 --no-audio
 ```
 
 Options: `--voice` picks any Kokoro voice (`af_heart` default, `bf_emma` or `bm_george` for British). Occasions are `birth`, `wedding`, `memorial`, `meeting` and `custom`.
 
-Rendering speed on a 4-core CPU is roughly 2 to 3 minutes per episode. A month of episodes for one city takes about an hour, unattended.
+Rendering speed on a 4-core CPU is roughly 2 to 3 minutes of audio work per episode, plus about 2 minutes of video work per minute of 720p video. A month of episodes for one city takes about an hour, unattended.
 
 ## How it works
 
@@ -74,6 +88,7 @@ Rendering speed on a 4-core CPU is roughly 2 to 3 minutes per episode. A month o
 | `skysoftly/render.py` + `tools/audio_kit.py` | Kokoro TTS with timed pauses, a synthesized ambient bed and sting, then ffmpeg loudness mastering to podcast spec (-16 LUFS). |
 | `skysoftly/chart.py` | All-sky star charts, the kids' look-up card, keepsake PDF and podcast cover art. |
 | `skysoftly/feed.py` | Podcast RSS feed with Apple Podcasts tags. |
+| `skysoftly/video.py` | Moving-nebula video: FFT fractal-noise clouds with bloom and filmic tone-mapping, parallax star field, a voice-driven glow, title and end cards, encoded with ffmpeg and libx264. |
 
 Tests run without the TTS model: `python -m pytest -q tests`.
 
