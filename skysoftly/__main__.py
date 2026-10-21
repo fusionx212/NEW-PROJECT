@@ -92,9 +92,13 @@ def _size(s: str) -> tuple[int, int]:
 
 
 def cmd_video(a):
-    from .video import make_video
+    from .video import make_video, name_style
+    seed, palette = a.seed, a.palette
+    if a.nebula_name:
+        seed, auto = name_style(a.nebula_name)
+        palette = palette or auto
     out = make_video(Path(a.audio), Path(a.out), title=a.title, subtitle=a.subtitle or "", end_line=a.end_line,
-                     seed=a.seed, palette=a.palette, size=_size(a.video_size))
+                     seed=seed, palette=palette, size=_size(a.video_size))
     print("Done:", out)
 
 
@@ -121,10 +125,11 @@ def cmd_keepsake(a):
                    root_hz=87.3, seed=11, speed=0.85)
         print(f"  audio {d:.0f}s")
         if a.video:
-            from .video import make_video
+            from .video import make_video, name_style
+            seed, palette = name_style(a.name)
             make_video(out / "letter-from-the-sky.mp3", out / "letter-from-the-sky.mp4", title=headline,
                        subtitle=f"{place.name} · {when.strftime('%d %B %Y')}", end_line="With love, from the sky.",
-                       seed=when.toordinal(), size=_size(a.video_size))
+                       seed=seed, palette=palette, size=_size(a.video_size))
             print("  video", out / "letter-from-the-sky.mp4")
     print("Done:", out)
 
@@ -152,6 +157,7 @@ def main(argv=None):
     v.add_argument("--audio", required=True); v.add_argument("--out", required=True)
     v.add_argument("--title", default="Tonight's Sky, Softly"); v.add_argument("--subtitle")
     v.add_argument("--end-line", default="Goodnight."); v.add_argument("--seed", type=int, default=1)
+    v.add_argument("--nebula-name", help="Grow a unique nebula from a name (same name, same nebula, every time)")
     v.add_argument("--palette", choices=["violet", "teal", "rose", "ocean"])
     v.add_argument("--video-size", default="1280x720")
     a = ap.parse_args(argv)

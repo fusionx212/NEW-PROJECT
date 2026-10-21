@@ -19,6 +19,7 @@ Everything is generated offline with free tools. There are no paid APIs, no stoc
 
 **Moving-nebula videos**
 - Any episode or keepsake can also be rendered as an MP4. A procedural nebula drifts and slowly zooms, three layers of stars twinkle with parallax, and a soft glow brightens when the narrator speaks.
+- Every name grows its own nebula: the same name always gives the same clouds and colours, so "Maya's nebula" is truly hers. See `output/name-gallery/six-names.jpg`.
 - Use them for YouTube sleep channels, Reels and TikTok teasers, or as a nicer keepsake to send to family.
 
 ## Samples in this repo
@@ -70,6 +71,7 @@ python -m skysoftly keepsake --city London --country GB --date 1994-07-16 --time
 # Or turn any audio file into a nebula video
 python -m skysoftly video --audio episode.mp3 --out episode.mp4 --subtitle "Boulder · Full Moon" \
     --palette violet          # violet, teal, rose or ocean
+python -m skysoftly video --audio letter.mp3 --out maya.mp4 --title "Maya" --nebula-name "Maya"
 
 # Scripts and charts only, in seconds
 python -m skysoftly nightly --city Paris --country FR --days 7 --no-audio

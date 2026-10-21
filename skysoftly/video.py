@@ -24,6 +24,14 @@ PALETTES = {
 }
 
 
+def name_style(name: str) -> tuple[int, str]:
+    """Every name gets its own nebula: a stable seed and palette derived from the name."""
+    import hashlib
+    h = hashlib.sha256(name.strip().lower().encode()).digest()
+    seed = int.from_bytes(h[:6], "big")
+    return seed, list(PALETTES)[h[6] % len(PALETTES)]
+
+
 def _fractal_tile(rng: np.random.Generator, beta: float) -> np.ndarray:
     """Tileable 1/f^beta noise via the FFT, normalised to 0..1."""
     f = np.fft.fftfreq(TILE)

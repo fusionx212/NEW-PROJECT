@@ -100,3 +100,9 @@ def test_video_short_clip(tmp_path):
     probe = subprocess.run(["ffprobe", "-v", "error", "-show_entries", "stream=codec_type", "-of", "csv=p=0", str(out)],
                            capture_output=True, text=True, check=True).stdout.split()
     assert sorted(probe) == ["audio", "video"]
+
+
+def test_name_style_is_stable_and_varied():
+    from skysoftly.video import name_style
+    assert name_style("Maya") == name_style(" maya ")
+    assert len({name_style(n) for n in ["Maya", "Leo", "Amara", "Noah", "Isla", "Oliver"]}) == 6
