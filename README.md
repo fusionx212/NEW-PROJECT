@@ -27,8 +27,8 @@ Everything is generated offline with free tools. There are no paid APIs, no stoc
 | Folder | What it is |
 |---|---|
 | `output/nightly/boulder/` | One full week for Boulder, Colorado, 21 to 27 October 2026, with MP3s, scripts, look-up cards, cover art and a podcast `feed.xml` |
-| `output/nightly/boulder/2026-10-25/episode.mp4` | The full Moon episode as a moving-nebula video |
-| `output/keepsakes/sample-birth/` | London, 16 July 1994: the night "Maya" was born, with a widescreen and a vertical video |
+| `output/keepsakes/sample-birth/` | London, 16 July 1994: the night "Maya" was born, with Maya's nebula video |
+| `output/name-gallery/eight-names.jpg` | Eight names, eight nebulae |
 | `output/keepsakes/sample-wedding/` | Edinburgh, 15 June 2019: "Sam and Alex" |
 | `output/keepsakes/sample-memorial/` | Sydney, 2 March 2024: "Grandad Joe" |
 

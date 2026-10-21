@@ -6,3 +6,6 @@ __pycache__/
 *.pyc
 .venv/
 .pytest_cache/
+# Large renders are delivered directly rather than stored in git (GitHub warns above 50 MB)
+output/keepsakes/sample-birth/letter-from-the-sky-vertical.mp4
+output/nightly/boulder/2026-10-25/episode.mp4
