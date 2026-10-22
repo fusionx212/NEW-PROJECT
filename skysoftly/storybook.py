@@ -11,6 +11,7 @@ import textwrap
 from pathlib import Path
 
 import numpy as np
+from .fonts import font
 from PIL import Image, ImageDraw, ImageFilter, ImageFont
 
 PX = 2400
@@ -20,11 +21,13 @@ GOLD = (245, 205, 130)
 PALE = (150, 165, 215)
 
 
+def _fam():
+    from .fonts import register_matplotlib
+    return register_matplotlib()
+
+
 def _font(size: int, serif: bool = True, italic: bool = False):
-    from matplotlib import font_manager
-    fam = "DejaVu Serif" if serif else "DejaVu Sans"
-    prop = font_manager.FontProperties(family=fam, style="italic" if italic else "normal")
-    return ImageFont.truetype(font_manager.findfont(prop), size)
+    return font(size, serif=serif, italic=italic)
 
 
 def _centered(d: ImageDraw.ImageDraw, y: int, text: str, font, fill, width: int = PX):
@@ -141,7 +144,7 @@ def make_storybook(out_pdf: Path, *, title: str, name: str, script: str, levels:
         ax = fig.add_axes([0.1, 0.16, 0.8, 0.7], projection="polar")
         draw_sky(ax, sky, label_stars=12)
         when = born.strftime("%d %B %Y").lstrip("0") if born else ""
-        fig.text(0.5, 0.94, "The sky on the night you were born", color="#f5cd82", fontsize=22, ha="center", family="serif")
+        fig.text(0.5, 0.94, "The sky on the night you were born", color="#f5cd82", fontsize=22, ha="center", family=_fam()["display"])
         fig.text(0.5, 0.9, f"{place} · {when}", color="#e8ecf8", fontsize=11, ha="center")
         fig.text(0.5, 0.06, "Computed from the real positions of the Moon, planets and stars.", color="#8fa3d6", fontsize=9, ha="center")
         tmp = out_pdf.with_suffix(".sky.png")
@@ -159,7 +162,7 @@ def make_storybook(out_pdf: Path, *, title: str, name: str, script: str, levels:
     cert.paste(neb, ((PX - 1100) // 2, 470))
     d.rectangle(((PX - 1100) // 2, 470, (PX + 1100) // 2, 1130), outline=(190, 150, 80), width=6)
     _centered(d, 1210, "This nebula was created especially for", _font(66, italic=True), (70, 75, 105))
-    _centered(d, 1310, name, _font(170), (150, 105, 35))
+    _centered(d, 1310, name, font(190, role="name"), (150, 105, 35))
     y = 1560
     for ln in ([caption] if caption else []) + ([f"Under the real sky of {place}, {born.strftime('%d %B %Y').lstrip('0')}"] if (born and place) else []):
         _centered(d, y, ln, _font(60, serif=False), (60, 65, 95)); y += 90

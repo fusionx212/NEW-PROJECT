@@ -13,6 +13,12 @@ import matplotlib.patheffects as pe  # noqa: E402
 from matplotlib.backends.backend_pdf import PdfPages  # noqa: E402
 
 from .catalog import STAR_NAMES  # noqa: E402
+from .fonts import register_matplotlib  # noqa: E402
+
+_FAM = register_matplotlib()
+plt.rcParams["font.family"] = _FAM["sans"]
+SERIF = _FAM["display"]
+SERIF_ITALIC = _FAM["italic"]
 from .engine import load_constellations, load_stars, radec_to_altaz  # noqa: E402
 from .script import direction, where, spoken_date  # noqa: E402
 
@@ -114,13 +120,13 @@ def lookup_card(sky: dict, out_base: Path, title: str = "Tonight's Sky, Softly")
     day = dt.date.fromisoformat(sky["date"])
     look = dt.datetime.fromisoformat(sky["look_time"])
     fig = plt.figure(figsize=(5.83, 8.27), facecolor=NAVY)
-    fig.text(0.5, 0.965, title, color=GOLD, fontsize=17, ha="center", va="top", family="serif")
+    fig.text(0.5, 0.965, title, color=GOLD, fontsize=17, ha="center", va="top", family=SERIF)
     fig.text(0.5, 0.93, f"{sky['place']['name']}  ·  {spoken_date(day)} {day.year}  ·  {look.strftime('%H:%M')}",
              color=INK, fontsize=9, ha="center", va="top")
     ax = fig.add_axes([0.11, 0.375, 0.78, 0.5], projection="polar")
     draw_sky(ax, sky)
     fig.text(0.5, 0.318, "Hold the card above your head with the N pointing north.", color=PALE, fontsize=7.5, ha="center")
-    fig.text(0.1, 0.28, "Tonight, look for:", color=GOLD, fontsize=12, ha="left", family="serif")
+    fig.text(0.1, 0.28, "Tonight, look for:", color=GOLD, fontsize=12, ha="left", family=SERIF)
     y = 0.245
     for it in _look_list(sky):
         fig.text(0.1, y, "☐", color=INK, fontsize=12, ha="left", va="center")
@@ -139,7 +145,7 @@ def keepsake_page(sky: dict, out_base: Path, headline: str, script_text: str, wh
     import re
     clean = re.sub(r"\s*\[pause [\d.]+\]\s*", " ", script_text).strip()
     fig1 = plt.figure(figsize=(8.27, 11.69), facecolor=NAVY)
-    fig1.text(0.5, 0.95, headline, color=GOLD, fontsize=24, ha="center", va="top", family="serif")
+    fig1.text(0.5, 0.95, headline, color=GOLD, fontsize=24, ha="center", va="top", family=SERIF)
     fig1.text(0.5, 0.905, f"{sky['place']['name']}  ·  {when.strftime('%A %d %B %Y')}  ·  {when.strftime('%H:%M')}",
               color=INK, fontsize=11, ha="center", va="top")
     ax = fig1.add_axes([0.09, 0.19, 0.82, 0.66], projection="polar")
@@ -147,12 +153,12 @@ def keepsake_page(sky: dict, out_base: Path, headline: str, script_text: str, wh
     fig1.text(0.5, 0.12, f"The sky above {sky['place']['name']}, latitude {sky['place']['lat']:.2f}°, longitude {sky['place']['lon']:.2f}°",
               color=PALE, fontsize=9, ha="center")
     fig1.text(0.5, 0.09, "With love, from the sky.", color=INK, fontsize=10,
-              ha="center", family="serif", style="italic")
+              ha="center", family=SERIF_ITALIC)
 
     fig2 = plt.figure(figsize=(8.27, 11.69), facecolor="#fbf8f0")
-    fig2.text(0.5, 0.94, "A letter from the sky", color=NAVY, fontsize=20, ha="center", va="top", family="serif")
+    fig2.text(0.5, 0.94, "A letter from the sky", color=NAVY, fontsize=20, ha="center", va="top", family=SERIF)
     body = "\n\n".join(textwrap.fill(p.strip(), 88) for p in clean.split("\n\n") if p.strip())
-    fig2.text(0.1, 0.88, body, color="#1d2340", fontsize=9.5, ha="left", va="top", family="serif", linespacing=1.5)
+    fig2.text(0.1, 0.88, body, color="#1d2340", fontsize=9.5, ha="left", va="top", family=SERIF, linespacing=1.5)
 
     out_base.parent.mkdir(parents=True, exist_ok=True)
     pdf, png = out_base.with_suffix(".pdf"), out_base.with_suffix(".png")
@@ -170,8 +176,8 @@ def cover_art(sky: dict, out_png: Path, subtitle: str) -> Path:
     draw_sky(ax, sky, label_stars=0, mag_limit=4.8)
     for t in list(ax.texts):
         t.set_visible(False)
-    fig.text(0.5, 0.6, "Tonight's Sky,", color=GOLD, fontsize=64, ha="center", va="center", family="serif", path_effects=[pe.withStroke(linewidth=10, foreground=NAVY)])
-    fig.text(0.5, 0.49, "Softly", color=GOLD, fontsize=64, ha="center", va="center", family="serif", style="italic", path_effects=[pe.withStroke(linewidth=10, foreground=NAVY)])
+    fig.text(0.5, 0.6, "Tonight's Sky,", color=GOLD, fontsize=64, ha="center", va="center", family=SERIF, path_effects=[pe.withStroke(linewidth=10, foreground=NAVY)])
+    fig.text(0.5, 0.49, "Softly", color=GOLD, fontsize=64, ha="center", va="center", family=SERIF_ITALIC, path_effects=[pe.withStroke(linewidth=10, foreground=NAVY)])
     fig.text(0.5, 0.38, subtitle, color=INK, fontsize=26, ha="center", va="center", path_effects=[pe.withStroke(linewidth=8, foreground=NAVY)])
     out_png.parent.mkdir(parents=True, exist_ok=True)
     fig.savefig(out_png, dpi=300, facecolor=NAVY)

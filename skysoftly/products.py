@@ -23,11 +23,9 @@ NAVY = (11, 20, 48)
 DEEP = (40, 45, 80)
 
 
-def font(size: int, serif: bool = True, italic: bool = False, bold: bool = False):
-    from matplotlib import font_manager
-    prop = font_manager.FontProperties(family="DejaVu Serif" if serif else "DejaVu Sans",
-                                       style="italic" if italic else "normal", weight="bold" if bold else "normal")
-    return ImageFont.truetype(font_manager.findfont(prop), size)
+def font(size: int, serif: bool = True, italic: bool = False, bold: bool = False, role: str | None = None):
+    from .fonts import font as house
+    return house(size, serif=serif, italic=italic, bold=bold, role=role)
 
 
 def fit_font(d, text, max_w, size, **kw):
@@ -73,7 +71,7 @@ def nursery_print(o: Order, levels, out: Path, w=2400, h=3000) -> Path:
     _stamp(a, w * 0.5, h * 0.33, big_star(int(w / 4)), np.array([255, 240, 210]) * 1.25)
     im = Image.fromarray(np.clip(a, 0, 255).astype(np.uint8))
     d = ImageDraw.Draw(im)
-    centred(d, w / 2, h * 0.62, o.name, fit_font(d, o.name, w * 0.8, 380), GOLD, shadow=True)
+    centred(d, w / 2, h * 0.62, o.name, fit_font(d, o.name, w * 0.8, 420, role="name"), GOLD, shadow=True)
     line2 = f"{o.name}'s Nebula"
     centred(d, w / 2, h * 0.62 + 470, line2, font(90, italic=True), INK, shadow=True)
     if o.born:
@@ -102,7 +100,7 @@ def invitation(o: Order, levels, out: Path, w=1500, h=2100) -> Path:
     im = Image.fromarray(np.clip(a, 0, 255).astype(np.uint8)); d = ImageDraw.Draw(im)
     centred(d, w / 2, h * 0.3, "Blast off!", font(110, italic=True), INK, shadow=True)
     centred(d, w / 2, h * 0.38, "You're invited to", font(70, serif=False), INK, shadow=True)
-    centred(d, w / 2, h * 0.43, f"{o.name}'s", fit_font(d, f"{o.name}'s", w * 0.85, 240), GOLD, shadow=True)
+    centred(d, w / 2, h * 0.43, f"{o.name}'s", fit_font(d, f"{o.name}'s", w * 0.85, 260, role="name"), GOLD, shadow=True)
     age = f"{ordinal(o.age).capitalize()} Birthday" if o.age else "Birthday"
     centred(d, w / 2, h * 0.56, age, fit_font(d, age, w * 0.85, 130), GOLD, shadow=True)
     centred(d, w / 2, h * 0.66, "Space Party", font(90, italic=True), INK, shadow=True)
@@ -119,7 +117,7 @@ def thank_you(o: Order, levels, out: Path, w=2100, h=1500) -> Path:
     a = np.asarray(im, dtype=np.float32)
     starlight_silhouette(a, o.animal, w * 0.18, h * 0.5, 420, t=0.2)
     im = Image.fromarray(np.clip(a, 0, 255).astype(np.uint8)); d = ImageDraw.Draw(im)
-    centred(d, w * 0.6, h * 0.3, "Thank you", font(190, italic=True), GOLD, shadow=True)
+    centred(d, w * 0.6, h * 0.3, "Thank you", font(210, role="name"), GOLD, shadow=True)
     centred(d, w * 0.6, h * 0.52, "for making my birthday", font(70, serif=False), INK, shadow=True)
     centred(d, w * 0.6, h * 0.6, "out of this world!", font(70, serif=False), INK, shadow=True)
     centred(d, w * 0.6, h * 0.74, f"Love, {o.name}", font(90, italic=True), GOLD, shadow=True)

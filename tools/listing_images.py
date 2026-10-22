@@ -12,8 +12,8 @@ PX = 2000
 
 
 def font(size, serif=True, italic=False):
-    prop = font_manager.FontProperties(family="DejaVu Serif" if serif else "DejaVu Sans", style="italic" if italic else "normal")
-    return ImageFont.truetype(font_manager.findfont(prop), size)
+    from skysoftly.fonts import font as house
+    return house(size, serif=serif, italic=italic)
 
 
 def centred(d, y, text, f, fill):

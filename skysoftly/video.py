@@ -42,8 +42,8 @@ def voice_envelope(audio: Path, n_frames: int) -> np.ndarray:
 
 
 def _font(size: int, serif: bool = True):
-    from matplotlib import font_manager
-    return ImageFont.truetype(font_manager.findfont("DejaVu Serif" if serif else "DejaVu Sans"), size)
+    from .fonts import font
+    return font(size, serif=serif)
 
 
 def _text_layer(w: int, h: int, lines: list[tuple[str, int, bool, tuple]], y_centre: float) -> np.ndarray:
