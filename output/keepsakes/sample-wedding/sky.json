@@ -1,0 +1,244 @@
+{
+ "place": {
+  "name": "Edinburgh",
+  "lat": 55.95206,
+  "lon": -3.19648,
+  "tz": "Europe/London",
+  "country": "GB"
+ },
+ "date": "2019-06-15",
+ "weekday": "Saturday",
+ "look_time": "2019-06-15T23:00+01:00",
+ "still_light_at_look": false,
+ "sun": {
+  "sunrise_today": "2019-06-15T04:25+01:00",
+  "sunset": "2019-06-15T22:00+01:00",
+  "civil_dusk": "2019-06-15T23:04+01:00",
+  "nautical_dusk": null,
+  "astronomical_dusk": null,
+  "sunrise_tomorrow": "2019-06-16T04:25+01:00",
+  "day_length_min": 1055,
+  "day_length_change_week_min": 9
+ },
+ "moon": {
+  "name": "Moon",
+  "alt": 13.9,
+  "az": 165.0,
+  "mag": -12.2,
+  "constellation": "Scorpius",
+  "rise": "2019-06-15T19:47+01:00",
+  "set": "2019-06-16T04:10+01:00",
+  "status": "up",
+  "extra": {
+   "illumination": 97.6,
+   "waxing": true,
+   "phase": "Waxing Gibbous",
+   "next_full": "2019-06-17T09:30+01:00",
+   "next_full_name": "Strawberry Moon",
+   "days_to_full": 1.4,
+   "days_to_new": 16.9,
+   "days_since_full": 28.0
+  }
+ },
+ "planets": [
+  {
+   "name": "Mercury",
+   "alt": 4.3,
+   "az": 308.2,
+   "mag": 0.0,
+   "constellation": "Gemini",
+   "rise": "2019-06-16T06:07+01:00",
+   "set": "2019-06-15T23:45+01:00",
+   "status": "hidden",
+   "extra": {
+    "moon_separation": 139.3
+   }
+  },
+  {
+   "name": "Venus",
+   "alt": -11.9,
+   "az": 344.7,
+   "mag": -3.8,
+   "constellation": "Taurus",
+   "rise": "2019-06-16T03:40+01:00",
+   "set": "2019-06-16T20:29+01:00",
+   "status": "hidden",
+   "extra": {
+    "moon_separation": 178.0
+   }
+  },
+  {
+   "name": "Mars",
+   "alt": 4.5,
+   "az": 306.3,
+   "mag": 1.8,
+   "constellation": "Gemini",
+   "rise": "2019-06-16T06:20+01:00",
+   "set": "2019-06-15T23:46+01:00",
+   "status": "hidden",
+   "extra": {
+    "moon_separation": 137.5
+   }
+  },
+  {
+   "name": "Jupiter",
+   "alt": 8.4,
+   "az": 154.7,
+   "mag": -2.5,
+   "constellation": "Ophiuchus",
+   "rise": "2019-06-16T21:09+01:00",
+   "set": "2019-06-16T04:22+01:00",
+   "status": "up",
+   "extra": {
+    "moon_separation": 11.5
+   }
+  },
+  {
+   "name": "Saturn",
+   "alt": -1.5,
+   "az": 126.6,
+   "mag": 0.2,
+   "constellation": "Sagittarius",
+   "rise": "2019-06-15T23:18+01:00",
+   "set": "2019-06-16T06:37+01:00",
+   "status": "rises_later",
+   "extra": {
+    "moon_separation": 41.5
+   }
+  }
+ ],
+ "stars": [
+  {
+   "name": "Arcturus",
+   "alt": 51.1,
+   "az": 205.8,
+   "mag": -0.05,
+   "light_years": 37
+  },
+  {
+   "name": "Vega",
+   "alt": 53.9,
+   "az": 97.5,
+   "mag": 0.03,
+   "light_years": 25
+  },
+  {
+   "name": "Altair",
+   "alt": 20.1,
+   "az": 104.4,
+   "mag": 0.76,
+   "light_years": 17
+  },
+  {
+   "name": "Deneb",
+   "alt": 41.3,
+   "az": 67.0,
+   "mag": 1.25,
+   "light_years": 3229
+  },
+  {
+   "name": "Alioth",
+   "alt": 69.4,
+   "az": 285.6,
+   "mag": 1.76,
+   "light_years": 81
+  },
+  {
+   "name": "Dubhe",
+   "alt": 57.4,
+   "az": 307.3,
+   "mag": 1.81,
+   "light_years": 124
+  },
+  {
+   "name": "Alkaid",
+   "alt": 74.2,
+   "az": 255.2,
+   "mag": 1.85,
+   "light_years": 101
+  },
+  {
+   "name": "Polaris",
+   "alt": 55.2,
+   "az": 0.3,
+   "mag": 1.97,
+   "light_years": 431
+  },
+  {
+   "name": "Kochab",
+   "alt": 71.5,
+   "az": 353.1,
+   "mag": 2.07,
+   "light_years": 126
+  },
+  {
+   "name": "Rasalhague",
+   "alt": 39.7,
+   "az": 136.3,
+   "mag": 2.08,
+   "light_years": 47
+  }
+ ],
+ "zenith_constellation": "Draco",
+ "high_constellations": [
+  {
+   "name": "Draco",
+   "alt": 79.8,
+   "az": 39.9
+  },
+  {
+   "name": "Bootes",
+   "alt": 67.9,
+   "az": 208.8
+  },
+  {
+   "name": "Hercules",
+   "alt": 63.9,
+   "az": 134.4
+  },
+  {
+   "name": "Ursa Minor",
+   "alt": 62.5,
+   "az": 3.3
+  },
+  {
+   "name": "Corona Borealis",
+   "alt": 59.8,
+   "az": 153.7
+  },
+  {
+   "name": "Canes Venatici",
+   "alt": 57.0,
+   "az": 250.7
+  },
+  {
+   "name": "Ursa Major",
+   "alt": 51.6,
+   "az": 293.4
+  },
+  {
+   "name": "Coma Berenices",
+   "alt": 48.2,
+   "az": 231.6
+  },
+  {
+   "name": "Lyra",
+   "alt": 46.2,
+   "az": 103.1
+  },
+  {
+   "name": "Cepheus",
+   "alt": 46.1,
+   "az": 36.4
+  }
+ ],
+ "meteors_active": [],
+ "meteors_upcoming": null,
+ "season": {
+  "kind": "solstice",
+  "date": "2019-06-21",
+  "days": 6,
+  "month": 6
+ },
+ "lst_rad": 4.026389234943272
+}

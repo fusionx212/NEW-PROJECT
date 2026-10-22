@@ -1,0 +1,13 @@
+# Runtime (all free, all offline once installed)
+ephem==4.2.1
+geonamescache==3.0.2
+matplotlib==3.11.2
+pillow==12.3.0
+requests==2.34.2
+numpy==2.5.3
+kokoro-onnx==0.6.1
+onnxruntime==1.29.0
+espeakng-loader==0.2.4
+soundfile==0.14.0
+# Development
+pytest

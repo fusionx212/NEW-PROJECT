@@ -1,0 +1,31 @@
+models/*.onnx
+models/*.bin
+models/*.bsp
+**/*.wav
+__pycache__/
+*.pyc
+.venv/
+.pytest_cache/
+# Large renders are delivered directly rather than stored in git (GitHub warns above 50 MB)
+output/keepsakes/sample-birth/letter-from-the-sky-vertical.mp4
+output/nightly/boulder/2026-10-25/episode.mp4
+output/stories/*/*-gift-pack.zip
+output/stories/*/story.mp4
+output/youtube/
+output/stories/*-animated/story.mp4
+output/orders/
+output/orders-dry-run/
+# The animated sample duplicates sample-isla; keep only its timings, chapters and script
+output/stories/sample-isla-animated/*
+!output/stories/sample-isla-animated/story.md
+!output/stories/sample-isla-animated/story.timing.json
+!output/stories/sample-isla-animated/chapters.json
+
+# Secrets: these belong in ~/.config/skysoftly, never in the repo
+etsy.json
+etsy_token.json
+youtube_client_secret.json
+youtube_token.json
+client_secret*.json
+.env
+.venv/
