@@ -13,3 +13,5 @@ output/stories/*/*-gift-pack.zip
 output/stories/*/story.mp4
 output/youtube/
 output/stories/*-animated/story.mp4
+output/orders/
+output/orders-dry-run/
