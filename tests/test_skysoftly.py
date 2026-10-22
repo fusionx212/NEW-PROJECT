@@ -179,3 +179,17 @@ def test_products_and_mockups(tmp_path):
     assert inv.size == (1500, 2100)                                   # 5 x 7 inches at 300 dpi
     assert nursery_wall(Image.open(made["nursery print"][0])).size == (2000, 2000)
     assert flat_lay(inv).size == (2000, 2000)
+
+
+def test_story_scene_tags_and_chapters(tmp_path):
+    import json
+    from skysoftly.story import StoryOrder, make_story
+    from skysoftly.storyvideo import write_chapters
+    text, tags = make_story(StoryOrder(name="Isla", age=5, giver="Gran"), None, None, with_scenes=True)
+    assert len(text.split("\n\n")) == len(tags)
+    assert tags[0] == "settle" and tags[-1] == "goodnight" and "countdown" in tags and "wishes" in tags
+    timing = {"paragraphs": [{"start": 3.0 + 10 * i, "end": 13.0 + 10 * i, "sentences": []} for i in range(len(tags))]}
+    (tmp_path / "t.json").write_text(json.dumps(timing))
+    ch = json.loads(write_chapters(tmp_path / "t.json", tags, tmp_path / "c.json").read_text())["chapters"]
+    assert ch[0]["start"] == 0.0 and ch[-1]["title"] == "Goodnight"
+    assert len(ch) == len([t for i, t in enumerate(tags) if i == 0 or tags[i - 1] != t])

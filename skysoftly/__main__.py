@@ -156,7 +156,7 @@ def cmd_story(a):
         place_name = place.name
         sky = sky_for(place, born, dt.time.fromisoformat(a.born_time))
     title = story_title(order)
-    text = make_story(order, sky, born)
+    text, tags = make_story(order, sky, born, with_scenes=True)
     out = Path(a.out or f"output/stories/{_slugify(a.name)}")
     out.mkdir(parents=True, exist_ok=True)
     _write_script(out / "story.md", title, text)
@@ -172,14 +172,22 @@ def cmd_story(a):
         from .render import render
         print("  narration")
         d = render(text, out / "story.mp3", voice=a.voice, title=title, album="Tonight's Sky, Softly: Bedtime Stories",
-                   root_hz=87.3, seed=seed % 97)
+                   root_hz=87.3, seed=seed % 97, timing_json=out / "story.timing.json")
+        from .storyvideo import write_chapters
+        write_chapters(out / "story.timing.json", tags, out / "chapters.json")
         print(f"  audio {d / 60:.1f} min")
         files.append(out / "story.mp3")
         if a.video:
-            from .video import make_video
-            print("  video (this is the slow part)")
-            make_video(out / "story.mp3", out / "story.mp4", title=title, subtitle="A bedtime story", seed=seed,
-                       palette=style, size=_size(a.video_size), star_name=a.name, star_caption=caption)
+            print("  video")
+            if a.video_style == "zoom":
+                from .video import make_video
+                make_video(out / "story.mp3", out / "story.mp4", title=title, subtitle="A bedtime story", seed=seed,
+                           palette=style, size=_size(a.video_size), star_name=a.name, star_caption=caption)
+            else:
+                from .storyvideo import render_story_video
+                render_story_video(out / "story.mp3", out / "story.timing.json", tags, out / "story.mp4", seed=seed,
+                                   style=style, name=a.name, animal=a.animal.lower(), caption=caption, title=title,
+                                   sky=sky, giver_message=a.message, size=_size(a.video_size))
             files.append(out / "story.mp4")
     (out / "How to enjoy your gift.txt").write_text(
         f"{title}\n\n"
@@ -272,6 +280,8 @@ def main(argv=None):
     st.add_argument("--voice", default="softly"); st.add_argument("--out")
     st.add_argument("--no-audio", action="store_true"); st.add_argument("--video", action="store_true")
     st.add_argument("--video-size", default="1280x720")
+    st.add_argument("--video-style", choices=["animated", "zoom"], default="animated",
+                    help="animated: illustrated scenes that follow the story (default); zoom: the deep nebula dive")
     pr = sub.add_parser("products", help="Printables from one order: nursery print, party kit, colouring, chart, wallpaper")
     pr.add_argument("--name", required=True); pr.add_argument("--age", type=int); pr.add_argument("--animal", default="fox")
     pr.add_argument("--colour", default="purple"); pr.add_argument("--born"); pr.add_argument("--born-time", default="21:00")
