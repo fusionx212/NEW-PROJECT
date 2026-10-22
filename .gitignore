@@ -15,3 +15,8 @@ output/youtube/
 output/stories/*-animated/story.mp4
 output/orders/
 output/orders-dry-run/
+# The animated sample duplicates sample-isla; keep only its timings, chapters and script
+output/stories/sample-isla-animated/*
+!output/stories/sample-isla-animated/story.md
+!output/stories/sample-isla-animated/story.timing.json
+!output/stories/sample-isla-animated/chapters.json
