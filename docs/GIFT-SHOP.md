@@ -17,7 +17,7 @@ Every pack contains:
 | File | What it is |
 |---|---|
 | `story.mp3` | The story, about eight minutes, read slowly in the soft British house voice |
-| `story.mp4` | A deep zoom into their nebula that lands on a star which bursts into their name |
+| `story.mp4` | An animated film of the story that follows the narrator, ending as their star bursts into their name |
 | `storybook.pdf` | Illustrated 8 x 8 inch storybook: cover, dedication, story pages, their birth-night sky chart |
 | `certificate.jpg` | A nebula certificate to print and frame |
 | `How to enjoy your gift.txt` | A short note on what's inside |

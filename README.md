@@ -24,6 +24,10 @@ Everything is generated offline with free tools. There are no paid APIs, no stoc
 - Every name grows its own nebula: the same name always gives the same picture, so "Maya's nebula" is truly hers. See `output/name-gallery/eight-names.jpg`.
 - Use them as the centrepiece of a birth, birthday, wedding or memorial gift, for YouTube sleep channels, or as Reels and TikTok teasers.
 
+**Animated story videos**
+- The story plays as an illustrated film that follows the narrator line by line: a bedroom window onto the child's real birth-night sky, a star that blinks hello, their starlight animal on the windowsill, a moonbeam ride over rooftops and clouds, the real planets from the night they were born, their own nebula, one falling star per wish, the giver's message, countdown numbers that appear as each is spoken, and their star bursting into their name.
+- An eight-minute story renders in about 14 minutes on a 4-core computer, and writes YouTube chapters too.
+
 **Personalised bedtime story gift packs** (the main Etsy product, see `docs/GIFT-SHOP.md`)
 - A bedtime story where the child is the hero: their own star calls them, their favourite animal becomes a companion made of starlight, and they travel to their own nebula. Birthday stories give one wish per year of age, and the star reads out a message from whoever gave the gift.
 - With a birth date and town, the story uses the real sky of the night they were born.
@@ -33,6 +37,10 @@ Everything is generated offline with free tools. There are no paid APIs, no stoc
 - A nursery name print, a space birthday party kit (invitation, thank-you card, cupcake toppers, favour tags, name banner), a colouring page, a bedtime routine chart and a phone wallpaper, all in the child's own nebula.
 - Lifestyle listing photos rendered in code: a framed print on a nursery wall, an invitation flat lay, a storybook on a tablet, a video on a phone.
 
+**Automation**
+- **Etsy:** `python -m skysoftly.etsy login` once, then `python -m skysoftly.etsy watch`. It reads each new order's personalisation, builds the pack, and leaves a checklist for the one manual step. Unclear orders go to a review folder instead of being guessed. See `docs/ETSY-SETUP.md`.
+- **YouTube (the Little Lantern channel):** `python -m skysoftly.youtube login`, then queue videos and upload them on a schedule with thumbnails, chapters and a synthetic-voice disclosure. Customer videos are refused. See `docs/YOUTUBE-SETUP.md`.
+
 ## Samples in this repo
 
 | Folder | What it is |
@@ -41,6 +49,7 @@ Everything is generated offline with free tools. There are no paid APIs, no stoc
 | `output/keepsakes/sample-birth/` | London, 16 July 1994: the night "Maya" was born, with Maya's nebula video |
 | `output/name-gallery/eight-names.jpg` | Eight names, eight nebulae |
 | `output/stories/sample-isla/` | A full gift pack for "Isla", turning five, with a starlight bunny and her real birth-night sky |
+| `output/stories/sample-isla-animated/` | The same story with the animated video's narration timings and chapters (the video itself is not stored in git) |
 | `docs/listing/` | Etsy listing images and lifestyle photos made from that pack |
 | `output/products/sample-isla/` | Isla's matching printables and listing photos |
 | `output/voice-test/` | Voice comparison clips; H became the house voice |
@@ -92,7 +101,7 @@ python -m skysoftly video --audio letter.mp3 --out maya.mp4 --title "Maya" --neb
 # A personalised bedtime story gift pack
 python -m skysoftly story --name "Isla" --pronoun she --age 5 --animal bunny --colour purple \
     --from "Grandma and Grandpa" --message "Happy fifth birthday, darling." \
-    --born 2021-05-02 --city Leeds --country GB --video
+    --born 2021-05-02 --city Leeds --country GB --video        # --video-style zoom for the deep nebula dive
 
 # Scripts and charts only, in seconds
 python -m skysoftly nightly --city Paris --country FR --days 7 --no-audio
@@ -117,6 +126,9 @@ Rendering speed on a 4-core CPU is roughly 2 to 3 minutes of audio work per epis
 | `skysoftly/products.py` | The printables: nursery print, party kit, colouring page, bedtime chart and wallpaper. |
 | `skysoftly/mockups.py` | Lifestyle listing photos rendered from scratch, no stock photos needed. |
 | `skysoftly/scenes.py` | Illustrated story scenes: bedroom window, planets and starlight animal silhouettes. |
+| `skysoftly/storyvideo.py` | The animated story film: scene painters, narration-timed scene changes, cross-dissolves and chapters. |
+| `skysoftly/etsy.py` | Etsy sign-in, order watching, personalisation parsing and pack building. |
+| `skysoftly/youtube.py` | YouTube sign-in, resumable uploads, thumbnails, metadata, scheduling queue and weekly plan. |
 | `skysoftly/zoom.py` | Deep zoom: nested detail levels that keep brightness and colour separate and hold the same tonal range at every depth, a star catalogue drawn crisp at any zoom, and the name's particle targets. |
 | `skysoftly/video.py` | The dive itself: eased exponential zoom, slow rotation, level cross-fades, fly-through stars, the growing star, the particle burst into the name, title cards, and ffmpeg encoding. |
 

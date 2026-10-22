@@ -280,14 +280,14 @@ class StoryVideo:
                     continue
                 sx = cx + (hash((int(t0 * 10), self.seed)) % 600 - 300) * (1 - k)
                 sy = -40 + (cy + 40) * k
-                for j in range(18):                  # a glittering trail
-                    _stamp(f, sx, sy - j * 18 * (1 - k) - 10, _spike_stamp(7), GOLD * (1 - j / 18) * 1.2)
-                _stamp(f, sx, sy, big_star(int(H * 0.09)), GOLD * 1.4)
+                for j in range(22):                  # a glittering trail
+                    _stamp(f, sx, sy - j * 16 * (1 - k) - 12, big_star(int(H * 0.03)), GOLD * (1 - j / 22) * 1.6)
+                _stamp(f, sx, sy, big_star(int(H * 0.16)), GOLD * 2.6)
             if landed:
-                _stamp(f, cx, cy, big_star(int(H * (0.12 + 0.015 * landed))), GOLD * (0.8 + 0.08 * landed))
+                _stamp(f, cx, cy, big_star(int(H * (0.16 + 0.02 * landed))), GOLD * (1.4 + 0.15 * landed))
                 for j in range(landed):              # each landed wish settles into a little ring
                     a = 2 * math.pi * j / max(landed, 5) + t * 0.15
-                    _stamp(f, cx + math.cos(a) * H * 0.14, cy + math.sin(a) * H * 0.09, big_star(int(H * 0.035)), GOLD)
+                    _stamp(f, cx + math.cos(a) * H * 0.16, cy + math.sin(a) * H * 0.1, big_star(int(H * 0.06)), GOLD * 1.8)
             return f
         if tag == "message":
             f = self.nebula(10, t, dim=0.45)

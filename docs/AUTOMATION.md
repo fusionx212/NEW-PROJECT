@@ -22,13 +22,13 @@ Narration timing drives the pictures. While the voice is generated we record whe
 | Home and the countdown | The ride home, then stars go out one by one, ten to one |
 | Goodnight | Back at the window; the companion curls up and fades; the star bursts into their name |
 
-`skysoftly/scenes.py` already draws the bedroom window, the planets and six companion animals (bunny, fox, cat and bear read well; owl and elephant need another pass). Prototype frames: `docs/listing/story-scenes-prototype.jpg` and `docs/listing/starlight-animals.jpg`.
+This is now built: `skysoftly/storyvideo.py` renders it, and the `story` command uses it by default. `skysoftly/scenes.py` draws the bedroom window, the planets and six companion animals (bunny, fox, cat and bear read well; owl and elephant need another pass). Prototype frames: `docs/listing/story-scenes-prototype.jpg` and `docs/listing/starlight-animals.jpg`.
 
 For YouTube, the same scenes play with a made-up character (for example "Luna"), never a customer's child.
 
 ## Automating gift delivery
 
-### Route A: Etsy, almost automatic
+### Route A: Etsy, almost automatic (built: `skysoftly/etsy.py`, setup in `docs/ETSY-SETUP.md`)
 
 Etsy's API lets a program read new orders and the buyer's personalisation text, but it cannot send buyer messages or attach files to a made-to-order item. So one short manual step remains.
 
@@ -55,7 +55,9 @@ Run both: Etsy for discovery and trust, our own shop for repeat buyers and highe
 - **Paid option:** a cloud server with more cores, roughly the cost of a few orders a month. No graphics card is needed.
 - Packs without video take about 4 minutes, so those can go out within the hour. Videos run in a queue.
 
-## Automating the YouTube side
+## Automating the YouTube side (built: `skysoftly/youtube.py`, setup in `docs/YOUTUBE-SETUP.md`)
+
+The channel is called **Little Lantern**. Channel art (banner and logo) was drafted in Canva.
 
 1. **Batch rendering:** each week, one command renders the next week's "Tonight's Sky" episodes plus one long sleep video.
 2. **Uploading:** the YouTube Data API uploads each video with its title, description, tags and thumbnail, and schedules when it goes public. Uploads use a large share of the daily API quota, so a few a day is the practical limit.
