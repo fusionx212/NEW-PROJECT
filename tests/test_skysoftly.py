@@ -96,7 +96,8 @@ def test_video_short_clip(tmp_path):
     wav = tmp_path / "a.wav"
     import soundfile as sf
     sf.write(wav, (0.1 * np.sin(np.linspace(0, 2000, 24000 * 2))).astype(np.float32), 24000)
-    out = make_video(wav, tmp_path / "v.mp4", title="Test", subtitle="Sub", seed=2, size=(320, 180), still_px=512)
+    out = make_video(wav, tmp_path / "v.mp4", title="Test", subtitle="Sub", seed=2, size=(320, 180), still_px=512,
+                     star_name="Maya", star_caption="Born today", log=lambda *a: None)
     probe = subprocess.run(["ffprobe", "-v", "error", "-show_entries", "stream=codec_type", "-of", "csv=p=0", str(out)],
                            capture_output=True, text=True, check=True).stdout.split()
     assert sorted(probe) == ["audio", "video"]
@@ -117,3 +118,17 @@ def test_nebula_still_has_structure():
     assert (lum < 0.05).mean() > 0.15          # real dark sky around the cloud
     assert np.percentile(lum, 99) > 0.3        # and bright glowing gas
     assert stars.max() > 0.9                   # bright stars
+
+
+def test_zoom_levels_hold_their_tone():
+    import numpy as np
+    from skysoftly.nebula import make_nebula
+    from skysoftly.zoom import build_levels, pick_star_spot
+    gas, _ = make_nebula(3, "jwst", 512)
+    T = pick_star_spot(gas)
+    assert 128 <= T[0] <= 384 and 128 <= T[1] <= 384
+    lv = build_levels(gas, T, 5, 3, log=lambda *a: None)
+    means = [np.asarray(im, dtype=np.float32).mean() for im in lv[1:]]
+    stds = [np.asarray(im.convert("L"), dtype=np.float32).std() for im in lv[1:]]
+    assert max(means) / min(means) < 1.6          # no drift to black or white as the zoom deepens
+    assert min(stds) > 0.6 * max(stds)            # contrast holds at depth

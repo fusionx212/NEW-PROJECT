@@ -98,9 +98,13 @@ def cmd_video(a):
         seed, auto = name_style(a.nebula_name)
         palette = palette or auto
     out = make_video(Path(a.audio), Path(a.out), title=a.title, subtitle=a.subtitle or "", end_line=a.end_line,
-                     seed=seed, palette=palette, size=_size(a.video_size))
+                     seed=seed, palette=palette, size=_size(a.video_size), star_name=a.star_name,
+                     star_caption=a.star_caption or "", zoom=a.zoom)
     print("Done:", out)
 
+
+CAPTIONS = {"birth": "Born {date} · {place}", "wedding": "Married {date} · {place}", "memorial": "Remembered · {date} · {place}",
+            "meeting": "Met {date} · {place}", "custom": "{date} · {place}"}
 
 HEADLINES = {"birth": "The night {name} was born", "wedding": "The night {name} were married",
              "memorial": "Remembering {name}", "meeting": "The night {name} met", "custom": "{name}"}
@@ -129,7 +133,8 @@ def cmd_keepsake(a):
             seed, palette = name_style(a.name)
             make_video(out / "letter-from-the-sky.mp3", out / "letter-from-the-sky.mp4", title=headline,
                        subtitle=f"{place.name} · {when.strftime('%d %B %Y')}", end_line="With love, from the sky.",
-                       seed=seed, palette=palette, size=_size(a.video_size))
+                       seed=seed, palette=palette, size=_size(a.video_size),
+                       star_name=a.name, star_caption=CAPTIONS[a.occasion].format(date=when.strftime('%d %B %Y').lstrip('0'), place=place.name))
             print("  video", out / "letter-from-the-sky.mp4")
     print("Done:", out)
 
@@ -158,6 +163,9 @@ def main(argv=None):
     v.add_argument("--title", default="Tonight's Sky, Softly"); v.add_argument("--subtitle")
     v.add_argument("--end-line", default="Goodnight."); v.add_argument("--seed", type=int, default=1)
     v.add_argument("--nebula-name", help="Grow a unique nebula from a name (same name, same nebula, every time)")
+    v.add_argument("--star-name", help="Land the zoom on a star that bursts into this name")
+    v.add_argument("--star-caption", help="Small line under the name, e.g. 'Born 2 May 2024 · Leeds'")
+    v.add_argument("--zoom", type=float, default=48.0, help="How far the camera zooms in (default 48x)")
     v.add_argument("--palette", choices=["hubble", "natural", "jwst", "violet"], help="Colour style; default comes from the name or seed")
     v.add_argument("--video-size", default="1280x720")
     a = ap.parse_args(argv)

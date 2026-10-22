@@ -17,10 +17,12 @@ Everything is generated offline with free tools. There are no paid APIs, no stoc
 - A two-page A4 PDF: the star chart for that moment, plus the written letter.
 - A personal hook nobody else offers: *"The light from Arcturus that shone on London that night had left the star around 1957."*
 
-**Moving-nebula videos**
-- Any episode or keepsake can also be rendered as an MP4 that looks like a Hubble or JWST image. Each video starts from one detailed nebula "photograph" made in code: glowing filaments in three narrowband colours (hydrogen, oxygen, sulphur), dark dust clouds lit at the edges by a young star cluster, and bright stars with diffraction spikes. A slow camera then glides and zooms through it, with the stars moving on their own layer for depth, and a soft glow that follows the narrator's voice.
-- Every name grows its own nebula: the same name always gives the same clouds and colours, so "Maya's nebula" is truly hers. See `output/name-gallery/eight-names.jpg`.
-- Use them for YouTube sleep channels, Reels and TikTok teasers, or as a nicer keepsake to send to family.
+**Deep-zoom nebula videos that land on a name**
+- Each video opens on a whole nebula that looks like a Hubble or JWST image: glowing filaments in hydrogen, oxygen and sulphur colours, dark dust lit at the edges by young stars, and stars with diffraction spikes.
+- The camera then makes one slow, continuous Ken Burns dive, 48 times closer, into a single star. New filaments and dust keep appearing as it goes deeper, and stars stream past for a sense of flight.
+- The star grows from a pinprick into a radiant star, then bursts into hundreds of glowing particles that fly into place and spell the person's name, with a caption such as "Born 16 July 1994 · London".
+- Every name grows its own nebula: the same name always gives the same picture, so "Maya's nebula" is truly hers. See `output/name-gallery/eight-names.jpg`.
+- Use them as the centrepiece of a birth, birthday, wedding or memorial gift, for YouTube sleep channels, or as Reels and TikTok teasers.
 
 ## Samples in this repo
 
@@ -71,7 +73,8 @@ python -m skysoftly keepsake --city London --country GB --date 1994-07-16 --time
 # Or turn any audio file into a nebula video
 python -m skysoftly video --audio episode.mp3 --out episode.mp4 --subtitle "Boulder · Full Moon" \
     --palette jwst            # hubble, natural, jwst or violet
-python -m skysoftly video --audio letter.mp3 --out maya.mp4 --title "Maya" --nebula-name "Maya"
+python -m skysoftly video --audio letter.mp3 --out maya.mp4 --title "Maya" --nebula-name "Maya" \
+    --star-name "Maya" --star-caption "Born 2 May 2024 · Leeds" --zoom 48
 
 # Scripts and charts only, in seconds
 python -m skysoftly nightly --city Paris --country FR --days 7 --no-audio
@@ -79,7 +82,7 @@ python -m skysoftly nightly --city Paris --country FR --days 7 --no-audio
 
 Options: `--voice` picks any Kokoro voice (`af_heart` default, `bf_emma` or `bm_george` for British). Occasions are `birth`, `wedding`, `memorial`, `meeting` and `custom`.
 
-Rendering speed on a 4-core CPU is roughly 2 to 3 minutes of audio work per episode, plus about 2 minutes of video work per minute of 720p video. A month of episodes for one city takes about an hour, unattended.
+Rendering speed on a 4-core CPU is roughly 2 to 3 minutes of audio work per episode, plus about 5 minutes of video work per minute of 720p video, and roughly three times that for 1080x1920 vertical. A month of episodes for one city takes about an hour, unattended.
 
 ## How it works
 
@@ -91,7 +94,8 @@ Rendering speed on a 4-core CPU is roughly 2 to 3 minutes of audio work per epis
 | `skysoftly/chart.py` | All-sky star charts, the kids' look-up card, keepsake PDF and podcast cover art. |
 | `skysoftly/feed.py` | Podcast RSS feed with Apple Podcasts tags. |
 | `skysoftly/nebula.py` | Photoreal nebula stills: domain-warped fractal noise, ridged filaments per emission line, rim-lit dust, an astronomy-style asinh stretch, and a star layer with diffraction spikes. |
-| `skysoftly/video.py` | Camera glide through the still with a parallax star layer, a voice-driven glow, title and end cards, encoded with ffmpeg and libx264. |
+| `skysoftly/zoom.py` | Deep zoom: nested detail levels that keep brightness and colour separate and hold the same tonal range at every depth, a star catalogue drawn crisp at any zoom, and the name's particle targets. |
+| `skysoftly/video.py` | The dive itself: eased exponential zoom, slow rotation, level cross-fades, fly-through stars, the growing star, the particle burst into the name, title cards, and ffmpeg encoding. |
 
 Tests run without the TTS model: `python -m pytest -q tests`.
 
