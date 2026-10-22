@@ -41,8 +41,11 @@ def voice_envelope(audio: Path, n_frames: int) -> np.ndarray:
     return np.clip(env / (peak + 1e-9), 0, 1)
 
 
-def _font(size: int, serif: bool = True):
+def _font(size: int, serif=True):
+    """serif may also be a house font role such as \"name\"."""
     from .fonts import font
+    if isinstance(serif, str):
+        return font(size, role=serif)
     return font(size, serif=serif)
 
 

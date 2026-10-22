@@ -12,12 +12,14 @@ import subprocess
 from pathlib import Path
 
 import numpy as np
-from PIL import Image, ImageDraw, ImageFilter
+from PIL import Image, ImageDraw
 
+from . import art
+from .art import BEDROOM, RIBBON_PATH, along, ken_burns, screen, sprite
 from .nebula import make_nebula
-from .scenes import bedroom_window, planet, starlight_silhouette
+from .scenes import planet, starlight_silhouette
 from .video import FPS, _affine, _font, _text_layer
-from .zoom import (LEVEL_FIT, _smooth, _spike_stamp, _stamp, big_star, build_levels, name_points, pick_star_spot,
+from .zoom import (LEVEL_FIT, _smooth, _stamp, big_star, build_levels, name_points, pick_star_spot,
                    sprinkle_stars)
 
 GOLD = np.array([255, 214, 140], np.float32)
@@ -45,26 +47,35 @@ class StoryVideo:
         self.n = 2048
         self.T = pick_star_spot(gas)
         self.levels = build_levels(gas, self.T, 6, seed, log=lambda *a: None)
-        dark = Image.fromarray((np.asarray(self.levels[0], np.float32) * 0.45).astype(np.uint8))
-        self.room_img = Image.fromarray(np.clip(bedroom_window(W, H, dark, 0.0, seed=seed % 1000), 0, 255).astype(np.uint8))
-        self.star_xy = (W * 0.55, H * 0.3)
+        self.pet = art.animal_key(animal)
+        self.room_img = art.image("bedroom")
+        bw, bh = self.room_img.size
+        x0, y0, x1, y1 = BEDROOM["window"]
+        yy, xx = np.mgrid[0:bh, 0:bw].astype(np.float32)
+        edge = np.minimum.reduce([xx - x0 * bw, x1 * bw - xx, yy - y0 * bh, y1 * bh - yy])
+        mask = np.clip(edge / 30.0, 0, 1)[..., None]
+        field = np.asarray(art.image("starfield").resize((bw, bh)), np.float32)
+        self.room_base = np.asarray(self.room_img, np.float32)
+        self.tw_a = field * mask * 0.55
+        self.tw_b = np.roll(field, (61, 97), (0, 1)) * mask * 0.55
+        self.climb_img = art.image("town")
+        self.space_img = art.image("space")
         self.planets = [p["name"] for p in (sky or {}).get("planets", []) if p["status"] in ("up", "rises_later")][:3] \
             or ["Jupiter", "Saturn", "Mars"]
         self.sky = sky
         self.chart = self._chart() if sky else None
-        self.climb_img = self._climb_canvas()
         self.wide = sprinkle_stars(self.levels[0].resize((int(W * 2.2), int(W * 2.2 * 9 / 16))), seed=seed % 997, density=0.6)
         base = min(H, W * 1.2)
         self.title_rgba = _text_layer(W, H, [(title, int(base * 0.07), True, (0.96, 0.80, 0.50)),
                                              ("A bedtime story", int(base * 0.035), False, (0.92, 0.94, 0.98))], 0.5)
         self.msg_rgba = _text_layer(W, H, self._wrap(self.msg or "", int(base * 0.055)), 0.5) if self.msg else None
-        fsize = int(base * 0.15)
-        f = _font(fsize)
+        fsize = int(base * 0.19)
+        f = _font(fsize, "name")
         probe = ImageDraw.Draw(Image.new("L", (8, 8)))
         while probe.textlength(name, font=f) > W * 0.86 and fsize > 12:
-            fsize = int(fsize * 0.92); f = _font(fsize)
+            fsize = int(fsize * 0.92); f = _font(fsize, "name")
         self.px, self.py, _ = name_points(name, W, H, 0.72, f, seed=seed)
-        self.name_rgba = _text_layer(W, H, [(name, fsize, True, (1.0, 0.86, 0.58))], 0.72)
+        self.name_rgba = _text_layer(W, H, [(name, fsize, "name", (1.0, 0.86, 0.58))], 0.72)
         self.cap_rgba = _text_layer(W, H, [(caption, int(base * 0.034), False, (0.9, 0.92, 0.98))], 0.82)
         k = len(self.px)
         self.p_delay = self.rng.uniform(0, 0.9, k); self.p_len = self.rng.uniform(2.4, 3.6, k)
@@ -102,74 +113,67 @@ class StoryVideo:
         plt.close(fig)
         return im.resize((self.W, self.H))
 
-    def _climb_canvas(self):
-        """A tall night scene for the moonbeam ride: rooftops at the bottom, clouds, then open sky."""
-        W, H = self.W, self.H
-        CH = H * 3
-        sky = np.asarray(sprinkle_stars(self.levels[0].resize((W, CH)), seed=7, density=0.9), np.float32)
-        grad = np.linspace(0.85, 0.25, CH)[::-1][:, None, None]
-        sky = sky * grad + np.array([10, 14, 40]) * (1 - grad)
-        im = Image.fromarray(np.clip(sky, 0, 255).astype(np.uint8)).convert("RGBA")
-        # clouds: soft blobs in the middle band
-        cl = Image.new("L", (W, CH), 0); dc = ImageDraw.Draw(cl)
-        rng = np.random.default_rng(3)
-        for _ in range(45):
-            cx, cy = rng.uniform(-100, W + 100), rng.uniform(CH * 0.38, CH * 0.62)
-            rw, rh = rng.uniform(120, 320), rng.uniform(40, 90)
-            dc.ellipse((cx - rw, cy - rh, cx + rw, cy + rh), fill=int(rng.uniform(40, 95)))
-        cl = cl.filter(ImageFilter.GaussianBlur(28))
-        im.alpha_composite(Image.merge("RGBA", (*[Image.new("L", (W, CH), v) for v in (110, 120, 170)], cl)))
-        # rooftops along the bottom with a few warm windows
-        rt = Image.new("RGBA", (W, CH), (0, 0, 0, 0)); dr = ImageDraw.Draw(rt)
-        x = -40
-        while x < W + 40:
-            bw = int(rng.uniform(110, 200)); bh = int(rng.uniform(140, 260)); top = CH - bh
-            dr.rectangle((x, top, x + bw, CH), fill=(14, 16, 34, 255))
-            dr.polygon([(x - 10, top), (x + bw / 2, top - bw * 0.45), (x + bw + 10, top)], fill=(14, 16, 34, 255))
-            if rng.uniform() < 0.6:
-                dr.rectangle((x + bw * 0.7, top - bw * 0.35, x + bw * 0.8, top - bw * 0.1), fill=(14, 16, 34, 255))
-            for _ in range(int(rng.integers(0, 3))):
-                wx, wy = x + rng.uniform(15, bw - 40), top + rng.uniform(25, bh - 60)
-                dr.rectangle((wx, wy, wx + 22, wy + 28), fill=(255, 196, 110, 255))
-            x += bw + int(rng.uniform(0, 20))
-        im.alpha_composite(rt)
-        return im.convert("RGB")
-
     # ---------- scene painters: each returns a float frame for local time u (0..1) and absolute t ----------
-    def room(self, push, star_gain, t):
+    def room(self, push, star_gain, t, pet=None, pet_gain=0.0):
+        """The painted bedroom. push slowly moves the camera in towards the window (0..3).
+
+        pet: None, "sit" (on the windowsill) or "sleep" (curled on the bed)."""
         W, H = self.W, self.H
-        z = 1.0 + 0.12 * push
-        im = self.room_img.transform((W, H), Image.AFFINE, _affine(W / 2, H * 0.42, 1 / z, 0, W, H), resample=Image.BILINEAR)
-        f = np.asarray(im, np.float32)
-        sx = W / 2 + (self.star_xy[0] - W / 2) * z; sy = H * 0.42 + (self.star_xy[1] - H * 0.42) * z
+        bg = self.room_base + self.tw_a * (0.5 + 0.5 * math.sin(t * 1.1)) + self.tw_b * (0.5 + 0.5 * math.sin(t * 0.83 + 2.0))
+        bg = Image.fromarray(np.clip(bg, 0, 255).astype(np.uint8))
+        z = 1.04 + 0.11 * push
+        k = min(push / 3.0, 1.0)
+        fx, fy = 0.5 + (BEDROOM["focus"][0] - 0.5) * k, 0.5 + (BEDROOM["focus"][1] - 0.5) * k
+        f, to_s, sc = ken_burns(bg, W, H, z, fx, fy, th=0.004 * math.sin(t * 0.07))
+        mx, my = to_s(*BEDROOM["moon"])
+        screen(f, sprite("moon", int(H * 0.15 * z)), mx, my + 3 * math.sin(t * 0.4), 0.85 + 0.1 * math.sin(t * 0.6))
+        sx, sy = to_s(*BEDROOM["star"])
         if star_gain > 0.01:
-            _stamp(f, sx, sy, big_star(int(H * 0.16 * (0.6 + 0.4 * star_gain))), GOLD * (0.4 + 0.8 * star_gain))
+            pulse = 1 + 0.06 * math.sin(t * 2.2)
+            screen(f, sprite("star", int(H * 0.2 * z * (0.55 + 0.45 * min(star_gain, 1.4)) * pulse)), sx, sy, min(star_gain, 1.6))
+        if pet and pet_gain > 0.01:
+            self.draw_pet(f, pet, to_s, sc, t, pet_gain)
+        self.star_xy = (sx, sy)
         return f, z
 
+    def draw_pet(self, f, pose, to_s, sc, t, gain):
+        if pose == "sit":
+            px, py = to_s(*BEDROOM["sill"])
+            hgt = self.room_img.height * 0.30 * sc
+        else:
+            px, py = to_s(*BEDROOM["bed"])
+            hgt = self.room_img.height * 0.20 * sc
+        if self.pet:
+            breathe = 1 + 0.012 * math.sin(t * (1.3 if pose == "sit" else 0.7))
+            name = art.ANIMAL_ART[self.pet][pose]
+            art.glow(f, sprite(name, int(hgt * breathe)), px, py + (2 * math.sin(t * 1.3) if pose == "sit" else 0),
+                     gain * (0.92 + 0.08 * math.sin(t * 2.7)), anchor="bottom")
+        else:
+            starlight_silhouette(f, self.animal, px, py - hgt * 0.45, int(hgt), t=t, seed=self.seed % 100, alpha=gain)
+
     def climb(self, u, reverse, t):
+        """Riding the moonbeam up over the painted town (or floating back down to it)."""
         W, H = self.W, self.H
-        CH = self.climb_img.height
         e = _ease(u)
-        y = (CH - H) * (1 - e) if not reverse else (CH - H) * e
-        f = np.asarray(self.climb_img.crop((0, int(y), W, int(y) + H)), np.float32)
-        # the moonbeam ribbon sweeping up through the frame
-        rib = Image.new("L", (W, H), 0); d = ImageDraw.Draw(rib)
-        ph = t * 0.6
-        pts = [(int(-60 + k * (W + 120) / 60), int(H * (0.95 - 0.8 * k / 60) + 40 * math.sin(k / 7 + ph))) for k in range(61)]
-        d.line(pts, fill=255, width=30, joint="curve")
-        r = np.asarray(rib.filter(ImageFilter.GaussianBlur(12)), np.float32)[..., None] / 255
-        f = f + r * np.array([190, 205, 245]) * 0.75
-        k = int(30 + 0.4 * (60 - 30))
-        ax, ay = pts[k]
-        starlight_silhouette(f, self.animal, ax, ay - H * 0.09, int(H * 0.22), t=t, seed=self.seed % 100)
+        k = e if not reverse else 1 - e
+        z = 1.3 - 0.22 * k
+        f, to_s, sc = ken_burns(self.climb_img, W, H, z, 0.5 + 0.06 * math.sin(t * 0.05), 0.85 - 0.7 * k)
+        rib = sprite("moonbeam", H)
+        wave = 0.72 + 0.28 * np.sin(np.arange(rib.shape[1], dtype=np.float32) * 0.012 - t * 2.4)
+        screen(f, rib * wave[None, :, None], W / 2, H / 2, 1.0)
+        rk = 0.18 + 0.6 * e if not reverse else 0.78 - 0.6 * e
+        (qx, qy), _ = along(RIBBON_PATH, rk)
+        bx = W / 2 + (qx - 0.5) * rib.shape[1]
+        by = H / 2 + (qy - 0.5) * rib.shape[0] - H * 0.06 + 6 * math.sin(t * 2.0)
+        if self.pet:
+            screen(f, sprite(art.ANIMAL_ART[self.pet]["leap"], int(H * 0.26), flip=reverse), bx, by, 1.0)
+        else:
+            starlight_silhouette(f, self.animal, bx, by, int(H * 0.22), t=t, seed=self.seed % 100)
         return f
 
     def planets_scene(self, u, t):
         W, H = self.W, self.H
-        wide = self.wide
-        x = (wide.width - W) * _ease(u)
-        y = (wide.height - H) * 0.5
-        f = np.asarray(wide.crop((int(x), int(y), int(x) + W, int(y) + H)), np.float32) * 0.85
+        f, _, _ = ken_burns(self.space_img, W, H, 1.25, 0.25 + 0.5 * _ease(u), 0.5 + 0.04 * math.sin(t * 0.1))
         n = len(self.planets)
         for i, p in enumerate(self.planets):
             # each planet drifts across faster than the background (parallax)
@@ -177,8 +181,17 @@ class StoryVideo:
             py = H * (0.32 + 0.3 * ((i * 37) % 3) / 2)
             r = {"Jupiter": 0.2, "Saturn": 0.11, "Mars": 0.07, "Venus": 0.09, "Mercury": 0.05}.get(p, 0.08) * H
             if -r * 3 < px < W + r * 3:
-                planet(f, p, px, py, r)
-        starlight_silhouette(f, self.animal, W * 0.3, H * 0.72 + 8 * math.sin(t), int(H * 0.2), t=t, seed=self.seed % 100)
+                if p.lower() in art.PLANETS:
+                    # a soft halo, then the painted planet with a gentle drift
+                    screen(f, sprite("star", int(r * 2.6)), px, py, 0.18)
+                    art.over(f, art.solid(p.lower(), int(r * (2.6 if p == "Saturn" else 2.1))), px, py + 4 * math.sin(t * 0.5 + i))
+                else:
+                    planet(f, p, px, py, r)
+        bx, by = W * 0.3, H * 0.7 + 10 * math.sin(t * 1.6)
+        if self.pet:
+            screen(f, sprite(art.ANIMAL_ART[self.pet]["leap"], int(H * 0.24)), bx, by, 1.0)
+        else:
+            starlight_silhouette(f, self.animal, bx, by, int(H * 0.2), t=t, seed=self.seed % 100)
         return f
 
     def nebula(self, z, t, dim=1.0):
@@ -251,14 +264,11 @@ class StoryVideo:
             im = self.chart.transform((W, H), Image.AFFINE, _affine(W / 2, H / 2, 1 / z, 0.05 * u, W, H), resample=Image.BILINEAR)
             return np.asarray(im, np.float32)
         if tag in ("companion", "curl", "secret"):
-            f, z = self.room(2.0, 1.0 if tag != "curl" else 0.8, t)
             if tag == "companion":
-                a = _ease((t - seg[0] - 1.0) / 3.0)
-                starlight_silhouette(f, self.animal, W * 0.5, H * 0.6, int(H * 0.3), t=t, seed=self.seed % 100, alpha=a)
-            elif tag == "curl":
-                a = 1 - _ease(u * 1.2 - 0.2)
-                starlight_silhouette(f, self.animal, W * 0.32, H * 0.84, int(H * 0.2), t=t * 0.5, seed=self.seed % 100, alpha=a)
-            return f
+                return self.room(2.0, 1.0, t, pet="sit", pet_gain=_ease((t - seg[0] - 1.0) / 3.0))[0]
+            if tag == "curl":
+                return self.room(2.0 - u, 0.8, t, pet="sleep", pet_gain=_ease(u * 4) * (1 - _ease((u - 0.7) / 0.3)))[0]
+            return self.room(2.0, 1.0, t, pet="sit", pet_gain=0.9)[0]
         if tag in ("moonbeam", "home"):
             return self.climb(u, tag == "home", t)
         if tag == "planets":
@@ -282,12 +292,12 @@ class StoryVideo:
                 sy = -40 + (cy + 40) * k
                 for j in range(22):                  # a glittering trail
                     _stamp(f, sx, sy - j * 16 * (1 - k) - 12, big_star(int(H * 0.03)), GOLD * (1 - j / 22) * 1.6)
-                _stamp(f, sx, sy, big_star(int(H * 0.16)), GOLD * 2.6)
+                screen(f, sprite("star", int(H * 0.2)), sx, sy, 1.3)
             if landed:
-                _stamp(f, cx, cy, big_star(int(H * (0.16 + 0.02 * landed))), GOLD * (1.4 + 0.15 * landed))
+                screen(f, sprite("star", int(H * (0.24 + 0.025 * landed) * (1 + 0.04 * math.sin(t * 2)))), cx, cy, 1.2)
                 for j in range(landed):              # each landed wish settles into a little ring
                     a = 2 * math.pi * j / max(landed, 5) + t * 0.15
-                    _stamp(f, cx + math.cos(a) * H * 0.16, cy + math.sin(a) * H * 0.1, big_star(int(H * 0.06)), GOLD * 1.8)
+                    screen(f, sprite("star", int(H * 0.08)), cx + math.cos(a) * H * 0.2, cy + math.sin(a) * H * 0.12, 1.1)
             return f
         if tag == "message":
             f = self.nebula(10, t, dim=0.45)
@@ -306,9 +316,8 @@ class StoryVideo:
                     f = _over(f, self.number(wd), a * 0.85)
             return f
         if tag == "goodnight":
-            f, z = self.room(2.0 + u, 1.0 + 0.4 * u, t)
-            sx = W / 2 + (self.star_xy[0] - W / 2) * z; sy = H * 0.42 + (self.star_xy[1] - H * 0.42) * z
-            return self.name_burst(f, t, seg[0] + 1.0, sx, sy)
+            f, _ = self.room(2.0 + u, 1.0 + 0.4 * u, t, pet="sleep", pet_gain=0.6 * (1 - _ease(u * 3)))
+            return self.name_burst(f, t, seg[0] + 1.0, *self.star_xy)
         return self.room(1.0, 0.8, t)[0]
 
 
