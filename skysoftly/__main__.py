@@ -198,6 +198,37 @@ def cmd_story(a):
     print("Done:", out)
 
 
+def cmd_products(a):
+    """Printables and listing photos from one order: nursery print, party kit, colouring page, bedtime chart, wallpaper."""
+    from PIL import Image
+    from .mockups import flat_lay, nursery_wall, phone_on_table
+    from .nebula import make_nebula, style_for
+    from .products import Order, make_all
+    from .story import style_for_colour
+    from .zoom import build_levels, pick_star_spot
+    sky, born, place_name = None, None, None
+    if a.born:
+        born = dt.date.fromisoformat(a.born)
+        place = _place(a)
+        place_name = place.name
+        sky = sky_for(place, born, dt.time.fromisoformat(a.born_time))
+    seed = style_for(a.name)[0]
+    gas, _ = make_nebula(seed, style_for_colour(a.colour), 2048)
+    levels = build_levels(gas, pick_star_spot(gas), 5, seed, log=lambda *x: None)
+    out = Path(a.out or f"output/products/{_slugify(a.name)}")
+    o = Order(a.name, a.age, a.animal, born, place_name, a.party, a.rsvp, sky)
+    made = make_all(o, levels, out)
+    for k, v in made.items():
+        print(f"  {k}: {len(v)} file(s)")
+    if a.mockups:
+        ph = out / "listing-photos"; ph.mkdir(exist_ok=True)
+        nursery_wall(Image.open(made["nursery print"][0])).save(ph / "nursery-wall.jpg", quality=90)
+        flat_lay(Image.open(made["party kit"][0])).save(ph / "invitation-flatlay.jpg", quality=90)
+        phone_on_table(Image.open(made["wallpaper"][0])).save(ph / "wallpaper-phone.jpg", quality=90)
+        print("  listing photos:", ph)
+    print("Done:", out)
+
+
 def main(argv=None):
     ap = argparse.ArgumentParser(prog="skysoftly", description="Tonight's Sky, Softly: real-sky bedtime audio and keepsakes.")
     sub = ap.add_subparsers(dest="cmd", required=True)
@@ -241,8 +272,17 @@ def main(argv=None):
     st.add_argument("--voice", default="softly"); st.add_argument("--out")
     st.add_argument("--no-audio", action="store_true"); st.add_argument("--video", action="store_true")
     st.add_argument("--video-size", default="1280x720")
+    pr = sub.add_parser("products", help="Printables from one order: nursery print, party kit, colouring, chart, wallpaper")
+    pr.add_argument("--name", required=True); pr.add_argument("--age", type=int); pr.add_argument("--animal", default="fox")
+    pr.add_argument("--colour", default="purple"); pr.add_argument("--born"); pr.add_argument("--born-time", default="21:00")
+    pr.add_argument("--city"); pr.add_argument("--country"); pr.add_argument("--lat", type=float); pr.add_argument("--lon", type=float)
+    pr.add_argument("--tz"); pr.add_argument("--place-name")
+    pr.add_argument("--party", help="Party details, lines separated by |, e.g. 'Saturday 2 May | 2pm to 4pm | Leeds Community Hall'")
+    pr.add_argument("--rsvp", help="e.g. 'to Sarah on 07700 900123'")
+    pr.add_argument("--mockups", action="store_true", help="Also render lifestyle listing photos")
+    pr.add_argument("--out")
     a = ap.parse_args(argv)
-    {"nightly": cmd_nightly, "keepsake": cmd_keepsake, "video": cmd_video, "story": cmd_story}[a.cmd](a)
+    {"nightly": cmd_nightly, "keepsake": cmd_keepsake, "video": cmd_video, "story": cmd_story, "products": cmd_products}[a.cmd](a)
 
 
 if __name__ == "__main__":

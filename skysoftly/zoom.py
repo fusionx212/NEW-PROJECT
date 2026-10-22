@@ -194,3 +194,16 @@ def sprinkle_stars(img: Image.Image, seed: int, density: float = 1.0) -> Image.I
     for _ in range(int(6 * density)):
         _stamp(a, rng.uniform(0, W), rng.uniform(0, H), st, np.array([255, 245, 230]) * rng.uniform(0.6, 1.0))
     return Image.fromarray(np.clip(a, 0, 255).astype(np.uint8))
+
+
+def big_star(r: int) -> np.ndarray:
+    """A hero star for prints: a real core, soft halo and diffraction spikes that scale with its size."""
+    yy, xx = np.mgrid[-r:r + 1, -r:r + 1].astype(np.float32)
+    rr2 = xx ** 2 + yy ** 2
+    core = np.exp(-rr2 / (2 * (r / 22) ** 2))
+    halo = np.exp(-rr2 / (2 * (r / 6) ** 2)) * 0.35 + np.exp(-rr2 / (2 * (r / 2.5) ** 2)) * 0.12
+    w = max(1.0, r / 70)
+    spikes = (np.exp(-np.abs(xx) / (r / 3.5)) * np.exp(-yy ** 2 / (2 * w ** 2))
+              + np.exp(-np.abs(yy) / (r / 3.5)) * np.exp(-xx ** 2 / (2 * w ** 2))) * 0.7
+    s = core + halo + spikes
+    return (s / s.max()).astype(np.float32)

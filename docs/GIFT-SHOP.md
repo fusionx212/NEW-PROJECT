@@ -41,6 +41,47 @@ A finished sample is in `output/stories/sample-isla/`.
 
 Launch with the middle tier as the main listing. It is the "wow" product, and its price sits inside what Etsy buyers already pay for personalised story books.
 
+## The wider product line: one order, a whole matching set
+
+The story pack is the hero. The same order details (name, age, animal, colour, birth date and town) also make a set of printables in one minute, all in the child's own nebula, so they sell as a coordinated range and as add-ons.
+
+| Product | Files | Suggested price | Why it sells |
+|---|---|---|---|
+| Nursery name print | 8 x 10 inch print-ready file (scales to 16 x 20): their nebula, hero star, name, birth date, town and the constellation they were born under | $9 | Wall art and nursery prints are among the biggest digital categories on Etsy |
+| Space birthday party kit | 5 x 7 invitation, thank-you card, cupcake toppers, favour tags, and a "HAPPY BIRTHDAY [NAME]" pennant banner | $14 | Themed party kits reportedly sell for 2 to 3 times generic printables |
+| Colouring page | Their animal riding a moonbeam past Saturn, their name in outline letters | Free with any order, or $3 | Keeps kids busy at the party; great review magnet |
+| Bedtime routine chart | Six steps with tick boxes and their starlight animal | $4 | Parents buy routine charts; it ties back to the story |
+| Phone wallpaper | Their nebula and name, sized for phones | Free bonus | Parents share it, which advertises the shop |
+| **Everything bundle** | Story pack with video, plus all of the above | $49 | Biggest basket; a natural "complete gift" for grandparents |
+
+Build it with:
+```
+python -m skysoftly products --name "Isla" --age 5 --animal bunny --colour purple \
+    --born 2021-05-02 --city Leeds --country GB \
+    --party "Saturday 2 May | 2pm to 4pm | Leeds Community Hall" --rsvp "to Sarah on 07700 900123" --mockups
+```
+
+A finished sample is in `output/products/sample-isla/`.
+
+## Photos that sell
+
+Etsy allows up to 10 photos per listing. Guides for digital products recommend a lifestyle scene as the first photo, then flat lays, close-ups and simple information graphics, and framed mockups for wall art. Every photo here is rendered by our own code, so there are no stock photo or mockup licences to buy.
+
+| Slot | Photo | File |
+|---|---|---|
+| 1 | Lifestyle hero: the framed print on a nursery wall | `listing-photos/nursery-wall.jpg` |
+| 2 | Everything in the gift | `docs/listing/01-hero.jpg` |
+| 3 | The invitation as a flat lay with envelope, eucalyptus and star confetti | `listing-photos/invitation-flatlay.jpg` |
+| 4 | The storybook on a tablet on a bed | `docs/listing/photos/storybook-tablet.jpg` |
+| 5 | The name reveal on a phone | `docs/listing/photos/video-phone.jpg` |
+| 6 | What's inside | `docs/listing/02-whats-inside.jpg` |
+| 7 | Inside the storybook | `docs/listing/03-storybook.jpg` |
+| 8 | How to personalise | `docs/listing/04-how-to-order.jpg` |
+| 9 | The party kit pieces laid out | Make from `party/` |
+| 10 | A real customer review, once you have one | |
+
+Add the 15-second name-reveal clip as the listing video. Etsy shows it in search, and it is the strongest proof that the product is special.
+
 ## The Etsy listing
 
 **Title**

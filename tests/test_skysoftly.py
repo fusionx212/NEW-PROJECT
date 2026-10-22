@@ -161,3 +161,21 @@ def test_storybook_pdf(tmp_path):
     pdf, cover, cert = make_storybook(tmp_path / "book.pdf", title=story_title(o), name="Leo", script=make_story(o),
                                       levels=levels, giver="Mum", caption="Leo's Nebula")
     assert pdf.stat().st_size > 50_000 and cover.exists() and cert.exists()
+
+
+def test_products_and_mockups(tmp_path):
+    from PIL import Image
+    from skysoftly.products import Order, make_all
+    from skysoftly.mockups import nursery_wall, flat_lay
+    levels = [Image.new("RGB", (512, 512), (50, 25, 80)) for _ in range(3)]
+    o = Order("Leo", 3, "fox", dt.date(2023, 3, 1), "York", "Sunday 1 March | 2pm", "to Sam")
+    made = make_all(o, levels, tmp_path)
+    banner = [p for p in made["party kit"] if "banner" in p.name]
+    assert len(banner) == len("HAPPY BIRTHDAY LEO")                  # one flag per letter and one star per space
+    for group in made.values():
+        for p in group:
+            assert p.exists() and p.stat().st_size > 10_000
+    inv = Image.open(made["party kit"][0])
+    assert inv.size == (1500, 2100)                                   # 5 x 7 inches at 300 dpi
+    assert nursery_wall(Image.open(made["nursery print"][0])).size == (2000, 2000)
+    assert flat_lay(inv).size == (2000, 2000)

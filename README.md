@@ -29,6 +29,10 @@ Everything is generated offline with free tools. There are no paid APIs, no stoc
 - With a birth date and town, the story uses the real sky of the night they were born.
 - Each pack has the narrated story, the deep-zoom video landing on their name, an illustrated 8 x 8 inch storybook PDF with their birth-night sky chart, and a nebula certificate, zipped and ready to deliver.
 
+**A matching product range from the same order**
+- A nursery name print, a space birthday party kit (invitation, thank-you card, cupcake toppers, favour tags, name banner), a colouring page, a bedtime routine chart and a phone wallpaper, all in the child's own nebula.
+- Lifestyle listing photos rendered in code: a framed print on a nursery wall, an invitation flat lay, a storybook on a tablet, a video on a phone.
+
 ## Samples in this repo
 
 | Folder | What it is |
@@ -37,7 +41,8 @@ Everything is generated offline with free tools. There are no paid APIs, no stoc
 | `output/keepsakes/sample-birth/` | London, 16 July 1994: the night "Maya" was born, with Maya's nebula video |
 | `output/name-gallery/eight-names.jpg` | Eight names, eight nebulae |
 | `output/stories/sample-isla/` | A full gift pack for "Isla", turning five, with a starlight bunny and her real birth-night sky |
-| `docs/listing/` | Four Etsy listing images made from that pack |
+| `docs/listing/` | Etsy listing images and lifestyle photos made from that pack |
+| `output/products/sample-isla/` | Isla's matching printables and listing photos |
 | `output/voice-test/` | Voice comparison clips; H became the house voice |
 | `output/keepsakes/sample-wedding/` | Edinburgh, 15 June 2019: "Sam and Alex" |
 | `output/keepsakes/sample-memorial/` | Sydney, 2 March 2024: "Grandad Joe" |
@@ -109,6 +114,9 @@ Rendering speed on a 4-core CPU is roughly 2 to 3 minutes of audio work per epis
 | `skysoftly/nebula.py` | Photoreal nebula stills: domain-warped fractal noise, ridged filaments per emission line, rim-lit dust, an astronomy-style asinh stretch, and a star layer with diffraction spikes. |
 | `skysoftly/story.py` | Personalised bedtime stories with pronouns, age-based wishes, a companion animal, the giver's message and real birth-night sky facts. |
 | `skysoftly/storybook.py` | The illustrated storybook PDF, birth-night sky page and nebula certificate. |
+| `skysoftly/products.py` | The printables: nursery print, party kit, colouring page, bedtime chart and wallpaper. |
+| `skysoftly/mockups.py` | Lifestyle listing photos rendered from scratch, no stock photos needed. |
+| `skysoftly/scenes.py` | Illustrated story scenes: bedroom window, planets and starlight animal silhouettes. |
 | `skysoftly/zoom.py` | Deep zoom: nested detail levels that keep brightness and colour separate and hold the same tonal range at every depth, a star catalogue drawn crisp at any zoom, and the name's particle targets. |
 | `skysoftly/video.py` | The dive itself: eased exponential zoom, slow rotation, level cross-fades, fly-through stars, the growing star, the particle burst into the name, title cards, and ffmpeg encoding. |
 
