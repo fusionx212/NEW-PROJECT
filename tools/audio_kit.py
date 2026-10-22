@@ -97,13 +97,20 @@ def mix(voice: np.ndarray, bed: np.ndarray | None = None, intro: np.ndarray | No
         v = v + b
     return np.clip(v, -1, 1)
 
-def master(wav_in: str, out_path: str, title: str = "", artist: str = "", album: str = "", bitrate: str = "128k"):
-    """Loudness-normalize to podcast spec (-16 LUFS, -1.5 dBTP) and encode MP3 with tags."""
+SOFT_CHAIN = ("highpass=f=60,bass=g=4:f=180,equalizer=f=6500:t=q:w=1.5:g=-6,treble=g=-4:f=9000,"
+              "acompressor=threshold=-24dB:ratio=3:attack=20:release=250,loudnorm=I=-18:TP=-2:LRA=7")
+PODCAST_CHAIN = "highpass=f=70,loudnorm=I=-16:TP=-1.5:LRA=11"
+
+
+def master(wav_in: str, out_path: str, title: str = "", artist: str = "", album: str = "", bitrate: str = "128k",
+           soft: bool = False):
+    """Loudness-normalize and encode MP3 with tags. soft=True adds warm close-mic EQ, gentle de-essing and
+    compression at a quieter -18 LUFS, for sleep and bedtime listening."""
     meta = []
     for k, v in (("title", title), ("artist", artist), ("album", album)):
         if v: meta += ["-metadata", f"{k}={v}"]
     cmd = ["ffmpeg", "-hide_banner", "-loglevel", "error", "-y", "-i", wav_in,
-           "-af", "highpass=f=70,loudnorm=I=-16:TP=-1.5:LRA=11", "-ar", "44100", "-ac", "1",
+           "-af", SOFT_CHAIN if soft else PODCAST_CHAIN, "-ar", "44100", "-ac", "1",
            "-codec:a", "libmp3lame", "-b:a", bitrate, *meta, out_path]
     subprocess.run(cmd, check=True)
     return out_path

@@ -126,7 +126,7 @@ def cmd_keepsake(a):
     if not a.no_audio:
         from .render import render
         d = render(text, out / "letter-from-the-sky.mp3", voice=a.voice, title=headline, album="A letter from the sky",
-                   root_hz=87.3, seed=11, speed=0.85)
+                   root_hz=87.3, seed=11)
         print(f"  audio {d:.0f}s")
         if a.video:
             from .video import make_video, name_style
@@ -139,6 +139,65 @@ def cmd_keepsake(a):
     print("Done:", out)
 
 
+def cmd_story(a):
+    """A complete personalised gift pack: narrated story, deep-zoom video, storybook PDF and certificate."""
+    import zipfile
+    from .nebula import make_nebula, style_for
+    from .script import words
+    from .story import StoryOrder, make_story, story_title, style_for_colour
+    from .storybook import make_storybook
+    from .zoom import build_levels, pick_star_spot
+    order = StoryOrder(name=a.name, pronoun=a.pronoun, age=a.age, animal=a.animal, colour=a.colour,
+                       giver=a.giver, message=a.message, occasion="birthday" if a.age else "bedtime")
+    sky, born, place_name = None, None, None
+    if a.born:
+        born = dt.date.fromisoformat(a.born)
+        place = _place(a)
+        place_name = place.name
+        sky = sky_for(place, born, dt.time.fromisoformat(a.born_time))
+    title = story_title(order)
+    text = make_story(order, sky, born)
+    out = Path(a.out or f"output/stories/{_slugify(a.name)}")
+    out.mkdir(parents=True, exist_ok=True)
+    _write_script(out / "story.md", title, text)
+    style = style_for_colour(a.colour)
+    seed = style_for(a.name)[0]
+    caption = f"{a.name}'s Nebula" + (f" · {words(a.age).capitalize()} today" if a.age else "")
+    print("  storybook")
+    gas, _ = make_nebula(seed, style, 2048)
+    levels = build_levels(gas, pick_star_spot(gas), 7, seed, log=lambda *x: None)
+    files = make_storybook(out / "storybook.pdf", title=title, name=a.name, script=text, levels=levels,
+                           giver=a.giver, message=a.message, sky=sky, born=born, place=place_name, caption=caption)
+    if not a.no_audio:
+        from .render import render
+        print("  narration")
+        d = render(text, out / "story.mp3", voice=a.voice, title=title, album="Tonight's Sky, Softly: Bedtime Stories",
+                   root_hz=87.3, seed=seed % 97)
+        print(f"  audio {d / 60:.1f} min")
+        files.append(out / "story.mp3")
+        if a.video:
+            from .video import make_video
+            print("  video (this is the slow part)")
+            make_video(out / "story.mp3", out / "story.mp4", title=title, subtitle="A bedtime story", seed=seed,
+                       palette=style, size=_size(a.video_size), star_name=a.name, star_caption=caption)
+            files.append(out / "story.mp4")
+    (out / "How to enjoy your gift.txt").write_text(
+        f"{title}\n\n"
+        "Inside this pack:\n"
+        "  story.mp3          the bedtime story, read slowly and softly. Play it at lights-out.\n"
+        "  story.mp4          the same story with a slow journey into the child's own nebula, landing on their name.\n"
+        "  storybook.pdf      the illustrated storybook to read together or print at home (8 x 8 inches).\n"
+        "  certificate.jpg    the nebula certificate, ready to print and frame.\n"
+        "  cover.jpg          the book cover, nice for sharing.\n\n"
+        "The narration uses a synthetic voice. Every sky detail in the story is computed from the real sky.\n")
+    files.append(out / "How to enjoy your gift.txt")
+    with zipfile.ZipFile(out / f"{_slugify(a.name)}-gift-pack.zip", "w", zipfile.ZIP_STORED) as z:
+        for f in files:
+            if Path(f).exists():
+                z.write(f, Path(f).name)
+    print("Done:", out)
+
+
 def main(argv=None):
     ap = argparse.ArgumentParser(prog="skysoftly", description="Tonight's Sky, Softly: real-sky bedtime audio and keepsakes.")
     sub = ap.add_subparsers(dest="cmd", required=True)
@@ -147,7 +206,7 @@ def main(argv=None):
         p.add_argument("--city"); p.add_argument("--country", help="ISO country code, e.g. US, GB")
         p.add_argument("--lat", type=float); p.add_argument("--lon", type=float); p.add_argument("--tz")
         p.add_argument("--place-name", help="How the narrator should name the place")
-        p.add_argument("--voice", default="af_heart", help="Kokoro voice, e.g. af_heart, bf_emma, bm_george")
+        p.add_argument("--voice", default="softly", help="softly (default: quiet British), nicole, heart, emma, or any Kokoro voice id")
         p.add_argument("--out"); p.add_argument("--no-audio", action="store_true", help="Scripts and charts only (fast)")
         p.add_argument("--video", action="store_true", help="Also render a moving-nebula MP4 for each audio file")
         p.add_argument("--video-size", default="1280x720", help="e.g. 1280x720, 1920x1080, or 1080x1920 for Reels/TikTok")
@@ -168,8 +227,22 @@ def main(argv=None):
     v.add_argument("--zoom", type=float, default=48.0, help="How far the camera zooms in (default 48x)")
     v.add_argument("--palette", choices=["hubble", "natural", "jwst", "violet"], help="Colour style; default comes from the name or seed")
     v.add_argument("--video-size", default="1280x720")
+    st = sub.add_parser("story", help="Personalised bedtime story gift pack")
+    st.add_argument("--name", required=True); st.add_argument("--pronoun", choices=["she", "he", "they"], default="they")
+    st.add_argument("--age", type=int, help="Makes it a birthday story with one wish per year")
+    st.add_argument("--animal", default="fox", help="Their favourite animal becomes a starlight companion")
+    st.add_argument("--colour", default="purple", help="Favourite colour picks the nebula's colours")
+    st.add_argument("--from", dest="giver", help="Who the gift is from, e.g. 'Grandma and Grandpa'")
+    st.add_argument("--message", help="A short message the star reads out")
+    st.add_argument("--born", help="Birth date (YYYY-MM-DD) to weave in the real sky of that night")
+    st.add_argument("--born-time", default="21:00")
+    st.add_argument("--city"); st.add_argument("--country"); st.add_argument("--lat", type=float); st.add_argument("--lon", type=float)
+    st.add_argument("--tz"); st.add_argument("--place-name")
+    st.add_argument("--voice", default="softly"); st.add_argument("--out")
+    st.add_argument("--no-audio", action="store_true"); st.add_argument("--video", action="store_true")
+    st.add_argument("--video-size", default="1280x720")
     a = ap.parse_args(argv)
-    {"nightly": cmd_nightly, "keepsake": cmd_keepsake, "video": cmd_video}[a.cmd](a)
+    {"nightly": cmd_nightly, "keepsake": cmd_keepsake, "video": cmd_video, "story": cmd_story}[a.cmd](a)
 
 
 if __name__ == "__main__":

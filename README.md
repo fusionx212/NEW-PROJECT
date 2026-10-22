@@ -24,6 +24,11 @@ Everything is generated offline with free tools. There are no paid APIs, no stoc
 - Every name grows its own nebula: the same name always gives the same picture, so "Maya's nebula" is truly hers. See `output/name-gallery/eight-names.jpg`.
 - Use them as the centrepiece of a birth, birthday, wedding or memorial gift, for YouTube sleep channels, or as Reels and TikTok teasers.
 
+**Personalised bedtime story gift packs** (the main Etsy product, see `docs/GIFT-SHOP.md`)
+- A bedtime story where the child is the hero: their own star calls them, their favourite animal becomes a companion made of starlight, and they travel to their own nebula. Birthday stories give one wish per year of age, and the star reads out a message from whoever gave the gift.
+- With a birth date and town, the story uses the real sky of the night they were born.
+- Each pack has the narrated story, the deep-zoom video landing on their name, an illustrated 8 x 8 inch storybook PDF with their birth-night sky chart, and a nebula certificate, zipped and ready to deliver.
+
 ## Samples in this repo
 
 | Folder | What it is |
@@ -31,6 +36,9 @@ Everything is generated offline with free tools. There are no paid APIs, no stoc
 | `output/nightly/boulder/` | One full week for Boulder, Colorado, 21 to 27 October 2026, with MP3s, scripts, look-up cards, cover art and a podcast `feed.xml` |
 | `output/keepsakes/sample-birth/` | London, 16 July 1994: the night "Maya" was born, with Maya's nebula video |
 | `output/name-gallery/eight-names.jpg` | Eight names, eight nebulae |
+| `output/stories/sample-isla/` | A full gift pack for "Isla", turning five, with a starlight bunny and her real birth-night sky |
+| `docs/listing/` | Four Etsy listing images made from that pack |
+| `output/voice-test/` | Voice comparison clips; H became the house voice |
 | `output/keepsakes/sample-wedding/` | Edinburgh, 15 June 2019: "Sam and Alex" |
 | `output/keepsakes/sample-memorial/` | Sydney, 2 March 2024: "Grandad Joe" |
 
@@ -76,11 +84,16 @@ python -m skysoftly video --audio episode.mp3 --out episode.mp4 --subtitle "Boul
 python -m skysoftly video --audio letter.mp3 --out maya.mp4 --title "Maya" --nebula-name "Maya" \
     --star-name "Maya" --star-caption "Born 2 May 2024 · Leeds" --zoom 48
 
+# A personalised bedtime story gift pack
+python -m skysoftly story --name "Isla" --pronoun she --age 5 --animal bunny --colour purple \
+    --from "Grandma and Grandpa" --message "Happy fifth birthday, darling." \
+    --born 2021-05-02 --city Leeds --country GB --video
+
 # Scripts and charts only, in seconds
 python -m skysoftly nightly --city Paris --country FR --days 7 --no-audio
 ```
 
-Options: `--voice` picks any Kokoro voice (`af_heart` default, `bf_emma` or `bm_george` for British). Occasions are `birth`, `wedding`, `memorial`, `meeting` and `custom`.
+Options: `--voice` picks the narrator. The default, `softly`, blends the quiet Nicole voice with Emma and speaks with a British accent, with warm close-mic processing. Other presets are `nicole`, `emma` and `heart`, and any Kokoro voice id works too. Occasions are `birth`, `wedding`, `memorial`, `meeting` and `custom`.
 
 Rendering speed on a 4-core CPU is roughly 2 to 3 minutes of audio work per episode, plus about 5 minutes of video work per minute of 720p video, and roughly three times that for 1080x1920 vertical. A month of episodes for one city takes about an hour, unattended.
 
@@ -94,6 +107,8 @@ Rendering speed on a 4-core CPU is roughly 2 to 3 minutes of audio work per epis
 | `skysoftly/chart.py` | All-sky star charts, the kids' look-up card, keepsake PDF and podcast cover art. |
 | `skysoftly/feed.py` | Podcast RSS feed with Apple Podcasts tags. |
 | `skysoftly/nebula.py` | Photoreal nebula stills: domain-warped fractal noise, ridged filaments per emission line, rim-lit dust, an astronomy-style asinh stretch, and a star layer with diffraction spikes. |
+| `skysoftly/story.py` | Personalised bedtime stories with pronouns, age-based wishes, a companion animal, the giver's message and real birth-night sky facts. |
+| `skysoftly/storybook.py` | The illustrated storybook PDF, birth-night sky page and nebula certificate. |
 | `skysoftly/zoom.py` | Deep zoom: nested detail levels that keep brightness and colour separate and hold the same tonal range at every depth, a star catalogue drawn crisp at any zoom, and the name's particle targets. |
 | `skysoftly/video.py` | The dive itself: eased exponential zoom, slow rotation, level cross-fades, fly-through stars, the growing star, the particle burst into the name, title cards, and ffmpeg encoding. |
 

@@ -132,3 +132,32 @@ def test_zoom_levels_hold_their_tone():
     stds = [np.asarray(im.convert("L"), dtype=np.float32).std() for im in lv[1:]]
     assert max(means) / min(means) < 1.6          # no drift to black or white as the zoom deepens
     assert min(stds) > 0.6 * max(stds)            # contrast holds at depth
+
+
+def test_story_personalisation_and_real_sky():
+    import re
+    from skysoftly.story import StoryOrder, make_story, story_title
+    born = dt.date(2021, 5, 2)
+    sky = sky_for(LONDON, born, dt.time(21, 0))
+    o = StoryOrder(name="Isla", pronoun="she", age=5, animal="bunny", colour="purple", giver="Grandma", message="We love you.")
+    t = make_story(o, sky, born)
+    assert story_title(o) == "Isla and the Star That Knew Her Name"
+    spoken = re.sub(r"\[pause [\d.]+\]", "", t)
+    assert "Five wishes" in t and "fifth birthday" in t
+    assert "starlight bunny" in t and "It's from Grandma" in t and "We love you." in t
+    assert "twenty twenty-one" in t and sky["zenith_constellation"] in t
+    assert not re.search(r"\d", spoken)
+    assert "{" not in t and "None" not in t
+    plain = make_story(StoryOrder(name="Leo"), None, None)          # no birth details, no age, they/them
+    assert "wishes" not in plain.split("present for you")[0] and "Leo" in plain
+
+
+def test_storybook_pdf(tmp_path):
+    from PIL import Image
+    from skysoftly.story import StoryOrder, make_story, story_title
+    from skysoftly.storybook import make_storybook
+    levels = [Image.new("RGB", (512, 512), (40, 20, 70)) for _ in range(3)]
+    o = StoryOrder(name="Leo", age=3)
+    pdf, cover, cert = make_storybook(tmp_path / "book.pdf", title=story_title(o), name="Leo", script=make_story(o),
+                                      levels=levels, giver="Mum", caption="Leo's Nebula")
+    assert pdf.stat().st_size > 50_000 and cover.exists() and cert.exists()

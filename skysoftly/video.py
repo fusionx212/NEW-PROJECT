@@ -85,7 +85,9 @@ def make_video(audio: Path, out: Path, *, title: str, subtitle: str = "", end_li
                crf: int = 21, preset: str = "medium", max_seconds: float | None = None, still_px: int | None = None,
                star_name: str | None = None, star_caption: str = "", zoom: float = 48.0, log=print) -> Path:
     """Deep Ken Burns zoom into the nebula, landing on one star. With star_name, the star bursts into that name."""
-    from .zoom import (LEVEL_FIT, StarCatalogue, _smooth, _spike_stamp, _stamp, build_levels, name_points, pick_star_spot)
+    from .zoom import (LEVEL_FIT, StarCatalogue, _smooth, _spike_stamp, _stamp, build_levels, galaxy_sprite,
+                       make_wisps, name_points, pick_star_spot)
+    from .nebula import STYLES
     W, H = size
     L_ = max(W, H)
     dur = float(subprocess.run(["ffprobe", "-v", "error", "-show_entries", "format=duration", "-of", "csv=p=0", str(audio)],
@@ -103,6 +105,26 @@ def make_video(audio: Path, out: Path, *, title: str, subtitle: str = "", end_li
     n_levels = int(math.ceil(math.log2(zoom / f0 * LEVEL_FIT))) + 1
     levels = build_levels(gas, T, n_levels, seed, log=log)
     cat = StarCatalogue(n, T, n_levels, seed)
+    wisp_col = np.clip(np.array(STYLES[style]["H"]) * 0.6 + np.array(STYLES[style]["O"]) * 0.4, 0, 1)
+    wisps = make_wisps(1024, seed, wisp_col)
+    # a few small distant galaxies, each living at one zoom depth
+    g_rng = np.random.default_rng(seed ^ 0x6A1A)
+    galaxies = []
+    for L in range(min(n_levels, 5)):
+        side = n / 2 ** L
+        cx_, cy_ = (n / 2, n / 2) if L == 0 else T
+        for _ in range(3):
+            gx_ = g_rng.uniform(cx_ - side * 0.45, cx_ + side * 0.45); gy_ = g_rng.uniform(cy_ - side * 0.45, cy_ + side * 0.45)
+            if math.hypot(gx_ - T[0], gy_ - T[1]) * 2 ** L < n * 0.08:
+                continue
+            galaxies.append((gx_, gy_, L, galaxy_sprite(g_rng, int(g_rng.uniform(10, 22))), g_rng.uniform(0.35, 0.7)))
+    # shooting stars: occasional, never during the title or the name
+    shoots = []
+    ts = 9.0
+    while ts < dur - 25:
+        ts += g_rng.uniform(10, 22)
+        shoots.append((ts, g_rng.uniform(0.1, 0.9) * W, g_rng.uniform(0.05, 0.5) * H, g_rng.uniform(-0.6, 0.6) + math.pi * 0.25,
+                       g_rng.uniform(0.18, 0.32) * L_, g_rng.uniform(0.5, 0.9)))
     env = voice_envelope(audio, n_frames)
     rng = np.random.default_rng(seed ^ 0x5EED)
 
@@ -120,7 +142,7 @@ def make_video(audio: Path, out: Path, *, title: str, subtitle: str = "", end_li
         return z, C, th
 
     # fly-through stars
-    m3 = 450
+    m3 = 900
     fx, fy = rng.uniform(-1, 1, m3), rng.uniform(-1, 1, m3)
     fz = rng.uniform(0.1, 1.0, m3); fb = rng.uniform(0.3, 1.0, m3)
 
@@ -186,6 +208,32 @@ def make_video(audio: Path, out: Path, *, title: str, subtitle: str = "", end_li
             frame = render_level(best, z, C, th) * a + render_level(best - 1, z, C, th) * (1 - a) if a < 0.999 else render_level(best, z, C, th)
         frame *= (0.94 + 0.1 * e)
 
+        # --- distant galaxies, which grow with the zoom like the gas does
+        s0g = f0 * n / z / L_
+        ctg, stg = math.cos(-th), math.sin(-th)
+        for gx_, gy_, gL, spr, gb in galaxies:
+            vis_g = 1.0 if gL == 0 else float(_smooth((z - 2.0 ** gL * 0.45) / (2.0 ** gL * 0.6)))
+            scale = (1 / s0g) * (n / 2 ** gL) / n * 0.6     # sprite pixels per level-0 pixel
+            sz = int(spr.shape[0] * scale * 2 ** gL / 2 ** gL)
+            if vis_g < 0.02 or sz < 3 or sz > 900:
+                continue
+            dxg, dyg = (gx_ - C[0]) / s0g, (gy_ - C[1]) / s0g
+            px_ = W / 2 + ctg * dxg - stg * dyg; py_ = H / 2 + stg * dxg + ctg * dyg
+            if -sz < px_ < W + sz and -sz < py_ < H + sz:
+                sp = np.asarray(Image.fromarray((spr * 255).clip(0, 255).astype(np.uint8)).resize((sz, sz), Image.BILINEAR),
+                                dtype=np.float32) / 255
+                _stamp(frame, px_, py_, sp.mean(-1), sp.reshape(-1, 3).max(0) * 0 + np.array([255, 240, 225]) * gb * vis_g)
+
+        # --- gas wisps drifting past the camera: two copies looping through an endless zoom
+        for ph0 in (0.0, 0.5):
+            p_ = (math.log(z) * 0.9 + t * 0.012 + ph0) % 1.0
+            env_w = math.sin(math.pi * p_) ** 2
+            sw = (1024 * 0.55 / L_) / (2 ** p_)
+            wim = wisps.transform((W, H), Image.AFFINE, _affine(512 + 60 * math.sin(ph0 * 9 + t * 0.02), 512, sw, th * 1.3 + ph0, W, H),
+                                  resample=Image.BILINEAR)
+            wa = np.asarray(wim, dtype=np.float32)
+            frame += wa[..., :3] * (wa[..., 3:4] / 255) * 0.32 * env_w
+
         # --- catalogue stars as crisp points
         s0 = f0 * n / z / L_
         ct, st_ = math.cos(-th), math.sin(-th)
@@ -194,7 +242,8 @@ def make_video(audio: Path, out: Path, *, title: str, subtitle: str = "", end_li
         vis = np.where(cat.lv == 0, 1.0, _smooth((z - 2.0 ** cat.lv * 0.45) / (2.0 ** cat.lv * 0.6)))
         ok = (qx >= 1) & (qx < W - 1) & (qy >= 1) & (qy < H - 1) & (vis > 0.01)
         bx, by = qx[ok].astype(np.int32), qy[ok].astype(np.int32)
-        val = (cat.b[ok] * vis[ok])[:, None] * cat.col[ok] * 255
+        tw = 1 + 0.12 * np.sin(t * 2.3 + cat.x[ok] * 0.37)
+        val = (cat.b[ok] * vis[ok] * tw)[:, None] * cat.col[ok] * 255
         for oy in (-1, 0, 1):
             for ox in (-1, 0, 1):
                 np.add.at(frame, (by + oy, bx + ox), val * k3[oy + 1, ox + 1])
@@ -204,7 +253,7 @@ def make_video(audio: Path, out: Path, *, title: str, subtitle: str = "", end_li
 
         # --- fly-through layer, only while the camera moves
         logz = math.log(z)
-        speed = max(0.0, (logz - prev_logz) * FPS)
+        speed = max(0.0, (logz - prev_logz) * FPS) + 0.025
         prev_logz = logz
         fz -= speed * 0.22 / FPS
         re = fz < 0.08
@@ -213,10 +262,25 @@ def make_video(audio: Path, out: Path, *, title: str, subtitle: str = "", end_li
         sx = W / 2 + (ct * fx - st_ * fy) / fz * L_ * 0.35
         sy = H / 2 + (st_ * fx + ct * fy) / fz * L_ * 0.35
         okf = (sx >= 1) & (sx < W - 1) & (sy >= 1) & (sy < H - 1)
-        fv = (np.clip(1.15 - fz, 0, 1) ** 2 * fb * min(speed * 3, 1.0) * 200)[okf]
+        fv = (np.clip(1.15 - fz, 0, 1) ** 2 * fb * min(0.35 + speed * 3, 1.0) * 200)[okf]
         for oy in (-1, 0, 1):
             for ox in (-1, 0, 1):
                 np.add.at(frame, (sy[okf].astype(np.int32) + oy, sx[okf].astype(np.int32) + ox), (fv * k3[oy + 1, ox + 1])[:, None])
+
+        # --- shooting stars
+        for (t0s, sx0, sy0, ang_s, ln_s, br_s) in shoots:
+            u_s = (t - t0s) / 0.7
+            if 0 <= u_s <= 1:
+                head = u_s * ln_s
+                tl = np.linspace(max(0.0, head - ln_s * 0.45), head, 90)
+                xs_ = sx0 + np.cos(ang_s) * tl; ys_ = sy0 + np.sin(ang_s) * tl
+                fade_s = math.sin(math.pi * u_s)
+                inten_s = np.linspace(0.05, 1.0, len(tl)) ** 2 * 255 * br_s * fade_s
+                oks = (xs_ >= 1) & (xs_ < W - 1) & (ys_ >= 1) & (ys_ < H - 1)
+                for oy in (-1, 0, 1):
+                    for ox in (-1, 0, 1):
+                        np.add.at(frame, (ys_[oks].astype(np.int32) + oy, xs_[oks].astype(np.int32) + ox),
+                                  (inten_s[oks] * k3[oy + 1, ox + 1])[:, None] * np.array([1.0, 0.97, 0.9]))
 
         # --- the person's star: grows from a pinprick into a radiant star
         g = math.log(z) / math.log(zoom)

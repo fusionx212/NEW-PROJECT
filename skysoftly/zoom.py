@@ -90,15 +90,22 @@ def _blur_img(a, r):
 class StarCatalogue:
     """Stars in level-0 pixel coordinates. Population L lives inside level L's region and fades in near zoom 2^L."""
 
-    def __init__(self, n: int, T, n_levels: int, seed: int, per_level: int = 5000):
+    def __init__(self, n: int, T, n_levels: int, seed: int, per_level: int = 8000):
         rng = np.random.default_rng(seed ^ 0x57A2)
         xs, ys, bs, lv, cols = [], [], [], [], []
         for L in range(n_levels):
             side = n / 2 ** L
             cx, cy = (n / 2, n / 2) if L == 0 else T
             k = per_level
-            xs.append(rng.uniform(cx - side / 2, cx + side / 2, k)); ys.append(rng.uniform(cy - side / 2, cy + side / 2, k))
-            bs.append(rng.pareto(2.1, k) * 0.22 + 0.05); lv.append(np.full(k, L))
+            x = rng.uniform(cx - side / 2, cx + side / 2, k); y = rng.uniform(cy - side / 2, cy + side / 2, k)
+            # three loose star clusters per level, so the sky has clumps and voids like a real one
+            for _ in range(3):
+                ccx, ccy = rng.uniform(cx - side * 0.4, cx + side * 0.4), rng.uniform(cy - side * 0.4, cy + side * 0.4)
+                m = k // 40
+                idx = rng.choice(k, m, replace=False)
+                x[idx] = rng.normal(ccx, side * 0.025, m); y[idx] = rng.normal(ccy, side * 0.025, m)
+            xs.append(x); ys.append(y)
+            bs.append(rng.pareto(2.0, k) * 0.24 + 0.05); lv.append(np.full(k, L))
             t = rng.uniform(0, 1, k)
             cols.append(np.stack([0.78 + 0.3 * t, 0.82 + 0.1 * t, 1.12 - 0.4 * t], 1))
         self.x = np.concatenate(xs); self.y = np.concatenate(ys); self.b = np.concatenate(bs).astype(np.float32)
@@ -119,9 +126,9 @@ def _spike_stamp(r: int) -> np.ndarray:
 
 def _stamp(img, cx, cy, stamp, rgb):
     H, W = img.shape[:2]
-    r = stamp.shape[0] // 2
-    x0, y0 = int(round(cx)) - r, int(round(cy)) - r
-    xa, ya, xb, yb = max(x0, 0), max(y0, 0), min(x0 + 2 * r + 1, W), min(y0 + 2 * r + 1, H)
+    sh, sw = stamp.shape[:2]
+    x0, y0 = int(round(cx)) - sw // 2, int(round(cy)) - sh // 2
+    xa, ya, xb, yb = max(x0, 0), max(y0, 0), min(x0 + sw, W), min(y0 + sh, H)
     if xa >= xb or ya >= yb:
         return
     img[ya:yb, xa:xb] += stamp[ya - y0:yb - y0, xa - x0:xb - x0, None] * rgb
@@ -141,3 +148,49 @@ def name_points(name: str, W: int, H: int, y_centre: float, font, max_points: in
         idx = rng.choice(len(xs), max_points, replace=False)
         xs, ys = xs[idx], ys[idx]
     return xs.astype(np.float32), ys.astype(np.float32), np.asarray(img, dtype=np.float32) / 255
+
+
+def make_wisps(n: int, seed: int, colour) -> Image.Image:
+    """A translucent layer of fine gas wisps that drifts past the camera, in front of the nebula."""
+    rng = np.random.default_rng(seed ^ 0x3171)
+    wx, wy = _noise(rng, n, 4.2), _noise(rng, n, 4.2)
+    f = _warp(_noise(rng, n, 3.3), wx, wy, 70 * n / 2048)
+    w = _norm(_ridged(f, 3.2)) * _norm(_noise(rng, n, 4.6)) ** 1.5
+    a = np.clip((w - 0.12) * 1.6, 0, 1) ** 1.4
+    rgb = np.ones((n, n, 3), dtype=np.float32) * np.asarray(colour, dtype=np.float32)
+    rgba = np.concatenate([rgb, a[..., None]], -1)
+    return Image.fromarray((np.clip(rgba, 0, 1) * 255).astype(np.uint8), mode="RGBA")
+
+
+def galaxy_sprite(rng, size: int) -> np.ndarray:
+    """A small, tilted spiral-ish galaxy: bright core, soft elliptical disc, faint arms."""
+    r = size
+    yy, xx = np.mgrid[-r:r + 1, -r:r + 1].astype(np.float32)
+    th = rng.uniform(0, np.pi); incl = rng.uniform(0.25, 0.8)
+    xr = xx * np.cos(th) + yy * np.sin(th); yr = (-xx * np.sin(th) + yy * np.cos(th)) / incl
+    rr = np.sqrt(xr ** 2 + yr ** 2) / r
+    ang = np.arctan2(yr, xr)
+    arms = 0.5 + 0.5 * np.cos(2 * ang - 6.0 * rr)
+    disc = np.exp(-rr * 4.5) * (0.55 + 0.45 * arms)
+    core = np.exp(-(rr * 9) ** 2)
+    g = disc * 0.6 + core
+    tint = np.array([1.0, 0.92, 0.8]) if rng.uniform() < 0.6 else np.array([0.8, 0.88, 1.0])
+    return (g[..., None] * tint).astype(np.float32)
+
+
+def sprinkle_stars(img: Image.Image, seed: int, density: float = 1.0) -> Image.Image:
+    """Adds a natural star field with a few spiked bright stars to a still (for book pages and listings)."""
+    rng = np.random.default_rng(seed)
+    a = np.asarray(img, dtype=np.float32).copy()
+    H, W = a.shape[:2]
+    k = int(W * H / 900 * density)
+    xs = rng.integers(1, W - 1, k); ys = rng.integers(1, H - 1, k)
+    b = (rng.pareto(2.0, k) * 0.25 + 0.05).clip(0, 1.5) * 255
+    for oy in (-1, 0, 1):
+        for ox in (-1, 0, 1):
+            w = 1.0 if ox == oy == 0 else (0.45 if ox == 0 or oy == 0 else 0.15)
+            np.add.at(a, (ys + oy, xs + ox), (b * w)[:, None] * np.array([0.95, 0.97, 1.0]))
+    st = _spike_stamp(int(W / 60))
+    for _ in range(int(6 * density)):
+        _stamp(a, rng.uniform(0, W), rng.uniform(0, H), st, np.array([255, 245, 230]) * rng.uniform(0.6, 1.0))
+    return Image.fromarray(np.clip(a, 0, 255).astype(np.uint8))
