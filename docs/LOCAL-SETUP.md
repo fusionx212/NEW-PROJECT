@@ -6,8 +6,8 @@ Secrets stay on your computer in `~/.config/skysoftly/` and never go in this rep
 ## 1. Get the code and tools
 
 ```bash
-git clone https://github.com/fusionx212/tonights-sky-softly.git
-cd tonights-sky-softly
+git clone https://github.com/fusionx212/Littlelantern.git
+cd Littlelantern
 python3 -m venv .venv && source .venv/bin/activate      # Windows: .venv\Scripts\activate
 pip install -r requirements.txt
 bash tools/fetch_models.sh          # the free Kokoro voice model, about 340 MB
